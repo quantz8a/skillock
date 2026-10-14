@@ -14,10 +14,20 @@ The lockfile for agent skills. `SKILL.md` files never show up in GitHub's depend
 - instructions that say the opposite thing
 - harness version pins that cannot all be true
 
+Python 3.9 or newer is enough. Nothing to compile, and the same command runs on macOS, Linux, and Windows:
+
 ```
-cargo install --path .
+python3 -m pip install ./python
 skillock check examples --harness opencode=2.0.1
 ```
+
+From a checkout, without installing:
+
+```
+PYTHONPATH=python python3 -m skillock check examples --harness opencode=2.0.1
+```
+
+The Rust crate in this repository is the same checker. Packaged binaries for each platform come later; this build does not need them.
 
 That example pack is the failure mode already written down in public issue trackers: a skill that makes the agent slow, two skills that pin different OpenCode majors, and a pin the installed version has drifted past.
 
@@ -62,6 +72,8 @@ With no paths, skillock scans `./skills`, `./examples`, and the `.agents`, `.cla
 标志叫 **Hana（哈娜）**。日语里这是常见的狗名，也是「鼻子」；韩语 하나 是「一」；中文就读哈娜。命令仍是 `skillock`。
 
 skillock 扫一组 `SKILL.md`，回答三件事：启动时 name 和 description 占多少 token，哪些技能会一起触发并且指令相反，哪些 harness 版本钉不能同时成立。示例目录的第一行就是上面那个数。它不安装技能，也不替代任何一个 coding agent。
+
+先用 Python 版。`pip install ./python` 之后命令还是 `skillock`，macOS、Linux、Windows 同一套，不用按平台发 Rust 二进制。Rust crate 留在仓库里，平台安装包以后再发。
 
 ## What this is not
 
