@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
-"""Crawl the curated skill repos and rewrite the Pages site plus the README table."""
+"""Evaluate public skill repos with skillock and rewrite the Pages site plus the README."""
 
 import json
 import os
 import shutil
 import subprocess
+import sys
+import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta, timezone
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "python"))
+
+from skillock.engine import Options, analyze, discover, load_skill  # noqa: E402
+
 CATALOG = ROOT / "data" / "catalog.json"
 HISTORY = ROOT / "data" / "history.json"
 BOARD = ROOT / "data" / "board.json"
@@ -21,14 +29,10 @@ README = ROOT / "README.md"
 START = "<!-- leaderboard:start -->"
 END = "<!-- leaderboard:end -->"
 MAX_POINTS = 120
+MAX_SKILLS = 200
 PAGE = "https://quantz8a.github.io/skillock/"
 SELF_REPO = "quantz8a/skillock"
-SEARCHES = (
-    "filename:SKILL.md path:skills",
-    "filename:SKILL.md path:.agents/skills",
-    "filename:SKILL.md path:.codex/skills",
-    "filename:SKILL.md path:.claude/skills",
-)
+TYPE_ORDER = ("省 token", "记忆", "设计", "规划", "综合")
 
 
 def token():
@@ -52,45 +56,13 @@ def github_json(url, auth):
             **({"Authorization": f"Bearer {auth}"} if auth else {}),
         },
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with urllib.request.urlopen(req, timeout=60) as resp:
         return json.loads(resp.read().decode())
 
 
-def search_skill_repos(auth):
-    found = {}
-    for query in SEARCHES:
-        url = "https://api.github.com/search/code?q=" + urllib.parse.quote(query) + "&per_page=100"
-        try:
-            data = github_json(url, auth)
-        except urllib.error.HTTPError as err:
-            print(f"search failed for {query}: HTTP {err.code}")
-            continue
-        except urllib.error.URLError as err:
-            print(f"search failed for {query}: {err.reason}")
-            continue
-        for item in data.get("items") or []:
-            repo = item.get("repository") or {}
-            name = repo.get("full_name") or ""
-            if not name or name.lower() == SELF_REPO:
-                continue
-            slot = found.setdefault(name, {"hits": 0, "url": repo.get("html_url") or f"https://github.com/{name}"})
-            slot["hits"] += 1
-    return found
-
-
-def fetch(repo, auth):
-    req = urllib.request.Request(
-        f"https://api.github.com/repos/{repo}",
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "skillock-leaderboard",
-            "X-GitHub-Api-Version": "2022-11-28",
-            **({"Authorization": f"Bearer {auth}"} if auth else {}),
-        },
-    )
+def fetch_repo(repo, auth):
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode())
+        data = github_json(f"https://api.github.com/repos/{repo}", auth)
     except urllib.error.HTTPError as err:
         return {"repo": repo, "error": f"HTTP {err.code}"}
     except urllib.error.URLError as err:
@@ -98,35 +70,115 @@ def fetch(repo, auth):
     return {
         "repo": repo,
         "stars": data.get("stargazers_count", 0),
-        "forks": data.get("forks_count", 0),
         "pushed": (data.get("pushed_at") or "")[:10],
         "url": data.get("html_url") or f"https://github.com/{repo}",
-        "fork": bool(data.get("fork")),
+        "branch": data.get("default_branch") or "main",
     }
+
+
+def skill_paths(tree):
+    found = []
+    for node in tree.get("tree") or []:
+        if node.get("type") != "blob":
+            continue
+        path = node.get("path") or ""
+        parts = path.split("/")
+        if parts[-1] != "SKILL.md":
+            continue
+        if any(part in {".git", "node_modules", "target", ".cursor"} for part in parts):
+            continue
+        found.append(path)
+    found.sort()
+    return found
+
+
+def download(repo, branch, path, auth):
+    quoted = urllib.parse.quote(path, safe="/")
+    ref = urllib.parse.quote(branch, safe="")
+    url = f"https://raw.githubusercontent.com/{repo}/{ref}/{quoted}"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "skillock-leaderboard",
+            **({"Authorization": f"Bearer {auth}"} if auth else {}),
+        },
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return resp.read()
+
+
+def frontmatter_name(raw):
+    text = raw.decode("utf-8", errors="replace")
+    if not text.startswith("---"):
+        return ""
+    lines = text.splitlines()[1:]
+    for line in lines:
+        if line.strip() == "---":
+            break
+        if line.startswith("name:"):
+            return line.split(":", 1)[1].strip().strip("\"'")
+    return ""
+
+
+def materialize(repo, branch, auth, dest):
+    ref = urllib.parse.quote(branch, safe="")
+    tree = github_json(f"https://api.github.com/repos/{repo}/git/trees/{ref}?recursive=1", auth)
+    paths = skill_paths(tree)
+    truncated = bool(tree.get("truncated")) or len(paths) > MAX_SKILLS
+
+    def write_one(path):
+        raw = download(repo, branch, path, auth)
+        relative = path
+        if "/" not in path:
+            name = frontmatter_name(raw) or "skill"
+            relative = f"{name}/SKILL.md"
+        target = dest / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+
+    written = 0
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(write_one, path) for path in paths[:MAX_SKILLS]]
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except urllib.error.URLError:
+                continue
+            written += 1
+    return written, truncated
+
+
+def code_summary(findings):
+    counts = Counter(item.code for item in findings)
+    if not counts:
+        return "通过"
+    return ", ".join(f"{code} {count}" for code, count in counts.most_common(4))
+
+
+def evaluate(repo, meta, auth, dest):
+    written, truncated = materialize(repo, meta["branch"], auth, dest)
+    if written == 0:
+        return None, truncated
+    files = discover([dest])
+    skills = [load_skill(path) for path in files]
+    report = analyze(skills, Options())
+    errors = sum(item.level == "error" for item in report.findings)
+    warnings = sum(item.level == "warning" for item in report.findings)
+    return {
+        "skills": len(report.skills),
+        "startup_tokens": report.startup_tokens,
+        "body_tokens": report.body_tokens,
+        "errors": errors,
+        "warnings": warnings,
+        "codes": code_summary(report.findings),
+        "truncated": truncated,
+    }, truncated
 
 
 def load_json(path, fallback):
     if not path.exists():
         return fallback
     return json.loads(path.read_text())
-
-
-def previous_stars(history, repo):
-    points = history.get("points") or []
-    if len(points) < 2:
-        return None
-    older = points[-2]["stars"].get(repo)
-    return older
-
-
-def week_stars(history, repo, now):
-    cutoff = now - timedelta(days=7)
-    chosen = None
-    for point in history.get("points") or []:
-        stamp = datetime.fromisoformat(point["t"])
-        if stamp <= cutoff:
-            chosen = point["stars"].get(repo)
-    return chosen
 
 
 def fmt(n):
@@ -141,32 +193,34 @@ def delta_text(delta):
     return f"{delta:,}"
 
 
-def short(text, limit):
-    if len(text) <= limit:
-        return text
-    return text[: limit - 1].rstrip() + "…"
-
-
 def ranked(rows):
-    ok = [row for row in rows if "stars" in row]
-    ok.sort(key=lambda row: (-row["stars"], row["repo"]))
-    return ok
+    rows = [row for row in rows if "startup_tokens" in row]
+    rows.sort(key=lambda row: (-row["startup_tokens"], -row["errors"], row["repo"]))
+    return rows
 
 
 def markdown_table(rows):
-    lines = ["| # | 仓库 | 星 | 较上次 | 最近推送 |", "| ---: | --- | ---: | ---: | --- |"]
+    lines = [
+        "| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |",
+        "| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
     for i, row in enumerate(rows, start=1):
+        count = fmt(row["skills"])
+        if row.get("truncated"):
+            count += "+"
         lines.append(
-            f"| {i} | [{row['repo']}]({row['url']}) | {fmt(row['stars'])} | {delta_text(row['delta'])} | {row['pushed']} |"
+            f"| {i} | [{row['repo']}]({row['url']}) | {count} | {fmt(row['startup_tokens'])} | {fmt(row['body_tokens'])} | {row['errors']} | {row['warnings']} | {delta_text(row['delta'])} | {row['codes']} |"
         )
     return "\n".join(lines)
 
 
 def readme_block(groups, updated):
     parts = [
-        f"从 GitHub 的 `skills/`、`.agents/skills`、`.codex/skills`、`.claude/skills` 里扫到的技能仓库，按星数排序。每 6 小时爬一次。skillock 自己不进榜。完整页面：[Hana 排行]({PAGE})。",
+        "Hana 把每个公开仓库当成一组已经装上的技能，跑 skillock 的检查。启动 token 是还没选中任何一个技能之前就要付的成本，高的排在前面。每 6 小时重测一次。skillock 自己不进榜。完整页面：[Hana 测评]("
+        + PAGE
+        + ")。",
         "",
-        f"最近一次写入 README 的爬取时间：{updated}。",
+        f"最近一次测评：{updated}。",
         "",
     ]
     for title, rows in groups:
@@ -175,62 +229,48 @@ def readme_block(groups, updated):
         if rows:
             parts.append(markdown_table(rows))
         else:
-            parts.append("这一类这次没有爬到。")
+            parts.append("这一类这次没有测到。")
         parts.append("")
-    failed = []
-    return "\n".join(parts).rstrip() + "\n", failed
+    return "\n".join(parts).rstrip() + "\n"
 
 
-def html_page(groups, failed, updated, rising):
+def html_page(groups, failed, updated):
     sections = []
     for title, rows in groups:
         body = []
         for i, row in enumerate(rows, start=1):
+            count = fmt(row["skills"]) + ("+" if row.get("truncated") else "")
             body.append(
                 "<tr>"
                 f"<td>{i}</td>"
                 f"<td><a href=\"{escape(row['url'])}\">{escape(row['repo'])}</a></td>"
-                f"<td class=\"num\">{fmt(row['stars'])}</td>"
+                f"<td class=\"num\">{count}</td>"
+                f"<td class=\"num\">{fmt(row['startup_tokens'])}</td>"
+                f"<td class=\"num\">{fmt(row['body_tokens'])}</td>"
+                f"<td class=\"num\">{row['errors']}</td>"
+                f"<td class=\"num\">{row['warnings']}</td>"
                 f"<td class=\"num\">{escape(delta_text(row['delta']))}</td>"
-                f"<td class=\"num\">{fmt(row['forks'])}</td>"
-                f"<td>{escape(row['pushed'])}</td>"
+                f"<td>{escape(row['codes'])}</td>"
                 "</tr>"
             )
         sections.append(
             f"<h2>{escape(title)}</h2>"
-            "<table><thead><tr><th>#</th><th>仓库</th><th>星</th><th>较上次</th><th>Fork</th><th>最近推送</th></tr></thead>"
-            f"<tbody>{''.join(body) or '<tr><td colspan=\"6\">这一类这次没有爬到。</td></tr>'}</tbody></table>"
-        )
-    rise_html = ""
-    if rising:
-        items = []
-        for row in rising:
-            items.append(
-                "<tr>"
-                f"<td><a href=\"{escape(row['url'])}\">{escape(row['repo'])}</a></td>"
-                f"<td>{escape(row['category'])}</td>"
-                f"<td class=\"num\">{escape(delta_text(row['week']))}</td>"
-                f"<td class=\"num\">{fmt(row['stars'])}</td>"
-                "</tr>"
-            )
-        rise_html = (
-            "<h2>近 7 日涨星</h2>"
-            "<table><thead><tr><th>仓库</th><th>类</th><th>7 日</th><th>星</th></tr></thead>"
-            f"<tbody>{''.join(items)}</tbody></table>"
+            "<table><thead><tr><th>#</th><th>仓库</th><th>技能</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead>"
+            f"<tbody>{''.join(body) or '<tr><td colspan=\"9\">这一类这次没有测到。</td></tr>'}</tbody></table>"
         )
     fail_html = ""
     if failed:
-        fail_html = "<p class=\"fail\">没爬到：" + escape(", ".join(failed)) + "</p>"
+        fail_html = "<p class=\"fail\">没测到：" + escape(", ".join(failed)) + "</p>"
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hana · 同类技能排行</title>
+<title>Hana · 技能测评</title>
 <style>
   :root {{ color-scheme: light; }}
   body {{ margin: 0; background: #E6E0D4; color: #161616; font: 16px/1.45 "Iowan Old Style", Palatino, "Songti SC", serif; }}
-  main {{ max-width: 980px; margin: 0 auto; padding: 32px 20px 64px; }}
+  main {{ max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }}
   header {{ display: flex; gap: 20px; align-items: center; }}
   img {{ width: 88px; height: 88px; }}
   h1 {{ font-size: 32px; margin: 0; letter-spacing: -0.03em; }}
@@ -241,8 +281,7 @@ def html_page(groups, failed, updated, rising):
   table {{ width: 100%; border-collapse: collapse; background: #f4f0e8; }}
   th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid #d9d1c3; vertical-align: top; }}
   th {{ font: 12px/1.2 ui-sans-serif, sans-serif; letter-spacing: 0.04em; }}
-  td.num, th:nth-child(n+3) {{ text-align: right; font-variant-numeric: tabular-nums; }}
-  td:last-child {{ text-align: left; }}
+  td.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
   .fail {{ color: #E24A2A; }}
 </style>
 </head>
@@ -251,12 +290,11 @@ def html_page(groups, failed, updated, rising):
 <header>
   <img src="hana.jpg" alt="Hana">
   <div>
-    <h1>同类技能排行</h1>
-    <p class="meta">爬取时间 {escape(updated)} · 每 6 小时一次 · 扫 GitHub 上的 SKILL.md</p>
-    <p class="meta"><a href="https://github.com/quantz8a/skillock">skillock</a> 不在这张榜上。榜只按公开仓库的星数排列，不是安装建议。</p>
+    <h1>技能测评</h1>
+    <p class="meta">测评时间 {escape(updated)} · 每 6 小时一次 · skillock 检查启动 token、正文 token、规范错误和冲突指令</p>
+    <p class="meta"><a href="https://github.com/quantz8a/skillock">skillock</a> 不在这张榜上。每一类按启动 token 从高到低排列。</p>
   </div>
 </header>
-{rise_html}
 {''.join(sections)}
 {fail_html}
 </main>
@@ -274,63 +312,66 @@ def replace_readme(block):
     README.write_text(pre + START + "\n" + block + END + post)
 
 
+def previous_startup(history, repo):
+    points = history.get("points") or []
+    if not points or "startup" not in points[-1]:
+        return None
+    return points[-1]["startup"].get(repo)
+
+
 def main():
     catalog = [item for item in json.loads(CATALOG.read_text()) if item["repo"].lower() != SELF_REPO]
-    catalog_names = {item["repo"] for item in catalog}
     auth = token()
-    discovered = search_skill_repos(auth)
-    extra_names = [name for name in discovered if name not in catalog_names]
-    extra_names.sort(key=lambda name: (-discovered[name]["hits"], name))
-    targets = {item["repo"]: item["category"] for item in catalog}
-    for name in extra_names[:40]:
-        targets[name] = "技能包"
     now = datetime.now(timezone.utc).replace(microsecond=0)
     history = load_json(HISTORY, {"points": []})
-    previous = history["points"][-1]["stars"] if history["points"] else {}
-    week_point = None
-    cutoff = now - timedelta(days=7)
-    for point in history["points"]:
-        if datetime.fromisoformat(point["t"]) <= cutoff:
-            week_point = point["stars"]
-
     rows = []
     failed = []
-    for repo, category in targets.items():
-        got = fetch(repo, auth)
-        if "error" in got:
-            failed.append(f"{repo} ({got['error']})")
-            continue
-        if got["fork"] and repo not in catalog_names:
-            continue
-        got["category"] = category
-        prev = previous.get(got["repo"])
-        got["delta"] = None if prev is None else got["stars"] - prev
-        if week_point and got["repo"] in week_point:
-            got["week"] = got["stars"] - week_point[got["repo"]]
-        else:
-            got["week"] = None
-        rows.append(got)
-
-    extras = sorted(
-        (row for row in rows if row["repo"] not in catalog_names),
-        key=lambda row: (-row["stars"], row["repo"]),
-    )[:15]
-    rows = [row for row in rows if row["repo"] in catalog_names] + extras
+    with tempfile.TemporaryDirectory(prefix="skillock-board-") as tmp:
+        root = Path(tmp)
+        for item in catalog:
+            repo = item["repo"]
+            print(f"evaluate {repo}", flush=True)
+            meta = fetch_repo(repo, auth)
+            if "error" in meta:
+                failed.append(f"{repo} ({meta['error']})")
+                continue
+            try:
+                measured, _truncated = evaluate(repo, meta, auth, root / repo.replace("/", "__"))
+            except urllib.error.HTTPError as err:
+                failed.append(f"{repo} (HTTP {err.code})")
+                continue
+            except urllib.error.URLError as err:
+                failed.append(f"{repo} ({err.reason})")
+                continue
+            if measured is None:
+                failed.append(f"{repo} (no SKILL.md)")
+                continue
+            prev = previous_startup(history, repo)
+            measured.update(
+                {
+                    "repo": repo,
+                    "type": item.get("type") or "综合",
+                    "url": meta["url"],
+                    "pushed": meta["pushed"],
+                    "delta": None if prev is None else measured["startup_tokens"] - prev,
+                }
+            )
+            rows.append(measured)
 
     history["points"].append(
-        {"t": now.isoformat(), "stars": {row["repo"]: row["stars"] for row in rows}}
+        {
+            "t": now.isoformat(),
+            "startup": {row["repo"]: row["startup_tokens"] for row in rows},
+        }
     )
     history["points"] = history["points"][-MAX_POINTS:]
     HISTORY.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n")
 
-    order = []
-    for item in catalog:
-        if item["category"] not in order:
-            order.append(item["category"])
-    groups = [(title, ranked([row for row in rows if row["category"] == title])) for title in order]
-    rising = [row for row in rows if row["week"] not in (None, 0)]
-    rising.sort(key=lambda row: (-row["week"], -row["stars"]))
-
+    order = [title for title in TYPE_ORDER if any(row["type"] == title for row in rows)]
+    for row in rows:
+        if row["type"] not in order:
+            order.append(row["type"])
+    groups = [(title, ranked([row for row in rows if row["type"] == title])) for title in order]
     updated = now.strftime("%Y-%m-%d %H:%M UTC")
     board = {
         "updated": now.isoformat(),
@@ -343,10 +384,12 @@ def main():
     logo = ROOT / "assets" / "hana.jpg"
     if logo.exists():
         shutil.copyfile(logo, DOCS / "hana.jpg")
-    (DOCS / "index.html").write_text(html_page(groups, failed, updated, rising[:8]))
+    (DOCS / "index.html").write_text(html_page(groups, failed, updated))
     (DOCS / ".nojekyll").write_text("")
-    replace_readme(readme_block(groups, updated)[0])
-    print(f"crawled {len(rows)} repos, failed {len(failed)}")
+    replace_readme(readme_block(groups, updated))
+    print(f"evaluated {len(rows)} repos, failed {len(failed)}")
+    if failed:
+        print("failed: " + "; ".join(failed))
 
 
 if __name__ == "__main__":

@@ -38,6 +38,28 @@
         "AGI4Sci/SciForge": 82,
         "juspay/kolu": 81
       }
+    },
+    {
+      "t": "2026-10-14T15:00:19+00:00",
+      "startup": {
+        "JuliusBrussee/caveman": 1507,
+        "rtk-ai/rtk": 688,
+        "DietrichGebert/ponytail": 669,
+        "thedotmack/claude-mem": 2503,
+        "nextlevelbuilder/ui-ux-pro-max-skill": 1326,
+        "Leonxlnx/taste-skill": 1527,
+        "pbakaus/impeccable": 4600,
+        "github/spec-kit": 171,
+        "garrytan/gstack": 1680,
+        "tt-a1i/archify": 561,
+        "obra/superpowers": 709,
+        "mattpocock/skills": 1597,
+        "affaan-m/ECC": 14970,
+        "multica-ai/andrej-karpathy-skills": 63,
+        "anthropics/skills": 2592,
+        "addyosmani/agent-skills": 2479,
+        "ComposioHQ/awesome-claude-skills": 6714
+      }
     }
   ]
 }

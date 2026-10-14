@@ -67,61 +67,54 @@ skillock lock examples --harness opencode=2.0.1
 
 With no paths, skillock scans `./skills`, `./examples`, and the `.agents`, `.claude`, and `.codex` skill directories in the current project. `--user` adds the same directories under `$HOME`. Pass a directory to scan anywhere else, including a local Codex++ install.
 
-## 同类技能
+## 测评
 
 <!-- leaderboard:start -->
-从 GitHub 的 `skills/`、`.agents/skills`、`.codex/skills`、`.claude/skills` 里扫到的技能仓库，按星数排序。每 6 小时爬一次。skillock 自己不进榜。完整页面：[Hana 排行](https://quantz8a.github.io/skillock/)。
+Hana 把每个公开仓库当成一组已经装上的技能，跑 skillock 的检查。启动 token 是还没选中任何一个技能之前就要付的成本，高的排在前面。每 6 小时重测一次。skillock 自己不进榜。完整页面：[Hana 测评](https://quantz8a.github.io/skillock/)。
 
-最近一次写入 README 的爬取时间：2026-10-14 14:46 UTC。
-
-### 技能包
-
-| # | 仓库 | 星 | 较上次 | 最近推送 |
-| ---: | --- | ---: | ---: | --- |
-| 1 | [obra/superpowers](https://github.com/obra/superpowers) | 298,988 | — | 2026-10-10 |
-| 2 | [mattpocock/skills](https://github.com/mattpocock/skills) | 290,721 | — | 2026-10-13 |
-| 3 | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 279,034 | — | 2026-10-12 |
-| 4 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | 219,687 | — | 2026-04-20 |
-| 5 | [anthropics/skills](https://github.com/anthropics/skills) | 181,073 | — | 2026-10-09 |
-| 6 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | 163,305 | — | 2026-10-13 |
-| 7 | [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents) | 160,021 | — | 2026-10-13 |
-| 8 | [github/spec-kit](https://github.com/github/spec-kit) | 141,244 | — | 2026-10-14 |
-| 9 | [garrytan/gstack](https://github.com/garrytan/gstack) | 136,381 | — | 2026-10-14 |
-| 10 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 135,739 | — | 2026-10-12 |
-| 11 | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | 121,272 | — | 2026-10-14 |
-| 12 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | 106,522 | — | 2026-10-13 |
-| 13 | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 96,046 | — | 2026-10-13 |
-| 14 | [tt-a1i/archify](https://github.com/tt-a1i/archify) | 83,408 | — | 2026-10-14 |
-| 15 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 81,058 | — | 2026-10-13 |
-| 16 | [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | 77,090 | — | 2026-09-18 |
-| 17 | [quran/quran.com-frontend-next](https://github.com/quran/quran.com-frontend-next) | 1,924 | — | 2026-04-27 |
-| 18 | [karanhudia/borg-ui](https://github.com/karanhudia/borg-ui) | 1,661 | — | 2026-10-12 |
-| 19 | [BiFangKNT/mtga](https://github.com/BiFangKNT/mtga) | 1,170 | — | 2026-06-18 |
-| 20 | [nevalang/neva](https://github.com/nevalang/neva) | 1,084 | — | 2026-08-23 |
-| 21 | [srid/emanote](https://github.com/srid/emanote) | 964 | — | 2026-07-26 |
-| 22 | [ArtisanCloud/PowerX](https://github.com/ArtisanCloud/PowerX) | 382 | — | 2026-10-13 |
-| 23 | [shift-editor/shift](https://github.com/shift-editor/shift) | 356 | — | 2026-10-14 |
-| 24 | [membranedev/application-skills](https://github.com/membranedev/application-skills) | 267 | — | 2026-04-28 |
-| 25 | [zacharyfmarion/openscad-studio](https://github.com/zacharyfmarion/openscad-studio) | 241 | — | 2026-08-19 |
-| 26 | [theowenyoung/home](https://github.com/theowenyoung/home) | 115 | — | 2026-09-27 |
-| 27 | [Sikao-Engine/KimiX](https://github.com/Sikao-Engine/KimiX) | 114 | — | 2026-10-14 |
-| 28 | [Dwlad90/stylex-swc-plugin](https://github.com/Dwlad90/stylex-swc-plugin) | 112 | — | 2026-10-13 |
-| 29 | [925236118/AlphaAgent](https://github.com/925236118/AlphaAgent) | 103 | — | 2026-10-08 |
-| 30 | [AGI4Sci/SciForge](https://github.com/AGI4Sci/SciForge) | 82 | — | 2026-09-03 |
-| 31 | [juspay/kolu](https://github.com/juspay/kolu) | 81 | — | 2026-10-14 |
+最近一次测评：2026-10-14 15:00 UTC。
 
 ### 省 token
 
-| # | 仓库 | 星 | 较上次 | 最近推送 |
-| ---: | --- | ---: | ---: | --- |
-| 1 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | 111,727 | — | 2026-10-14 |
-| 2 | [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | 83,323 | — | 2026-10-14 |
+| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | 28 | 1,507 | 24,014 | 6 | 6 | — | duplicate-name 6, overlap 6 |
+| 2 | [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | 12 | 688 | 25,813 | 5 | 1 | — | spec-name 5, overlap 1 |
+| 3 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | 12 | 669 | 10,154 | 6 | 2 | — | duplicate-name 6, overlap 2 |
 
 ### 记忆
 
-| # | 仓库 | 星 | 较上次 | 最近推送 |
-| ---: | --- | ---: | ---: | --- |
-| 1 | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 100,657 | — | 2026-10-13 |
+| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 37 | 2,503 | 70,501 | 24 | 19 | — | overlap 12, spec-name 8, spec-dir 7, body-budget 7 |
+
+### 设计
+
+| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 22 | 4,600 | 57,928 | 1 | 172 | — | overlap 171, duplicate-name 1, startup-budget 1 |
+| 2 | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 14 | 1,527 | 90,128 | 11 | 7 | — | spec-dir 11, body-budget 7 |
+| 3 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 13 | 1,326 | 26,720 | 6 | 6 | — | duplicate-name 6, overlap 6 |
+
+### 规划
+
+| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | [garrytan/gstack](https://github.com/garrytan/gstack) | 65 | 1,680 | 686,275 | 1 | 48 | — | body-budget 46, overlap 2, duplicate-name 1 |
+| 2 | [tt-a1i/archify](https://github.com/tt-a1i/archify) | 5 | 561 | 10,797 | 0 | 0 | — | 通过 |
+| 3 | [github/spec-kit](https://github.com/github/spec-kit) | 2 | 171 | 2,005 | 0 | 0 | — | 通过 |
+
+### 综合
+
+| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 200+ | 14,970 | 456,631 | 46 | 37 | — | duplicate-name 46, overlap 24, body-budget 10, spec-metadata 2 |
+| 2 | [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | 200+ | 6,714 | 162,041 | 26 | 16837 | — | overlap 16836, spec-name 15, spec-dir 11, startup-budget 1 |
+| 3 | [anthropics/skills](https://github.com/anthropics/skills) | 20 | 2,592 | 73,871 | 2 | 4 | — | body-budget 4, spec-description 1, spec-dir 1 |
+| 4 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | 25 | 2,479 | 88,922 | 0 | 2 | — | body-budget 2 |
+| 5 | [mattpocock/skills](https://github.com/mattpocock/skills) | 38 | 1,597 | 42,766 | 0 | 1 | — | spec-metadata 1 |
+| 6 | [obra/superpowers](https://github.com/obra/superpowers) | 15 | 709 | 42,498 | 0 | 3 | — | body-budget 3 |
+| 7 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | 1 | 63 | 601 | 0 | 0 | — | 通过 |
 <!-- leaderboard:end -->
 
 ## 中文
@@ -130,7 +123,7 @@ With no paths, skillock scans `./skills`, `./examples`, and the `.agents`, `.cla
 
 skillock 扫一组 `SKILL.md`，回答三件事：启动时 name 和 description 占多少 token，哪些技能会一起触发并且指令相反，哪些 harness 版本钉不能同时成立。示例目录的第一行就是上面那个数。它不安装技能，也不替代任何一个 coding agent。
 
-先用 Python 版。`pip install ./python` 之后命令还是 `skillock`，macOS、Linux、Windows 同一套，不用按平台发 Rust 二进制。Rust crate 留在仓库里，平台安装包以后再发。
+先用 Python 版。`pip install ./python` 之后命令还是 `skillock`，macOS、Linux、Windows 同一套。Apple 芯片的二进制在 [v0.1.0](https://github.com/quantz8a/skillock/releases/tag/v0.1.0)。
 
 ## What this is not
 
