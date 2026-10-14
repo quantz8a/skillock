@@ -1,5 +1,11 @@
 # skillock
 
+<p align="center">
+  <img src="assets/hana.jpg" alt="Hana" width="280">
+</p>
+
+<p align="center"><strong>Hana · 哈娜</strong></p>
+
 **6 skills · startup 152 tokens · bodies 7356 tokens · 5 errors · 5 warnings**
 
 The lockfile for agent skills. `SKILL.md` files never show up in GitHub's dependency graph, so nothing checks whether two skills can be installed together. skillock scans a directory and reports three things:
@@ -52,6 +58,8 @@ skillock lock examples --harness opencode=2.0.1
 With no paths, skillock scans `./skills`, `./examples`, and the `.agents`, `.claude`, `.codex`, and `.cursor` skill directories in the current project. `--user` adds the same directories under `$HOME`.
 
 ## 中文
+
+标志叫 **Hana（哈娜）**。日语里这是常见的狗名，也是「鼻子」；韩语 하나 是「一」；中文就读哈娜。命令仍是 `skillock`。
 
 skillock 扫一组 `SKILL.md`，回答三件事：启动时 name 和 description 占多少 token，哪些技能会一起触发并且指令相反，哪些 harness 版本钉不能同时成立。示例目录的第一行就是上面那个数。它不安装技能，也不替代任何一个 coding agent。
 
