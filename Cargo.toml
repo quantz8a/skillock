@@ -1,0 +1,10 @@
+[package]
+name = "skillock"
+version = "0.1.0"
+edition = "2021"
+description = "Lockfile for agent skills: token budget, instruction conflicts, and harness version pins"
+license = "MIT"
+readme = "README.md"
+rust-version = "1.74"
+
+[dependencies]
