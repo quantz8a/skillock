@@ -181,7 +181,7 @@ Usage:
   skillock lock  [options] [paths...]
 
 With no paths, skillock scans ./skills, ./examples, and the
-.agents, .claude, .codex, and .cursor skill directories in the
+.agents, .claude, and .codex skill directories in the
 current project. Add --user to also scan those directories in $HOME.
 If the project has none, the home directories are scanned anyway.
 

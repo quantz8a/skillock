@@ -60,7 +60,6 @@ pub fn local_roots(cwd: &Path) -> Vec<PathBuf> {
         ".agents/skills",
         ".claude/skills",
         ".codex/skills",
-        ".cursor/skills",
         "skills",
         "examples",
     ]
@@ -78,7 +77,6 @@ pub fn user_roots() -> Vec<PathBuf> {
         ".agents/skills",
         ".claude/skills",
         ".codex/skills",
-        ".cursor/skills",
     ]
     .into_iter()
     .map(|rel| home.join(rel))

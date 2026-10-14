@@ -14,7 +14,6 @@ PRODUCTS = (
     ("openclaw", "openclaw"),
     ("open code", "opencode"),
     ("opencode", "opencode"),
-    ("cursor", "cursor"),
     ("codex", "codex"),
     ("gemini", "gemini"),
     ("hermes", "hermes"),
@@ -595,7 +594,7 @@ def _push(path, found, seen):
 
 def local_roots(cwd):
     roots = []
-    for rel in (".agents/skills", ".claude/skills", ".codex/skills", ".cursor/skills", "skills", "examples"):
+    for rel in (".agents/skills", ".claude/skills", ".codex/skills", "skills", "examples"):
         path = Path(cwd) / rel
         if path.is_dir():
             roots.append(path)
@@ -607,7 +606,7 @@ def user_roots():
     if not home:
         return []
     roots = []
-    for rel in (".agents/skills", ".claude/skills", ".codex/skills", ".cursor/skills"):
+    for rel in (".agents/skills", ".claude/skills", ".codex/skills"):
         path = Path(home) / rel
         if path.is_dir():
             roots.append(path)

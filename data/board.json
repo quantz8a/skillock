@@ -1,0 +1,386 @@
+{
+  "updated": "2026-10-14T14:46:45+00:00",
+  "groups": {
+    "技能包": [
+      {
+        "repo": "obra/superpowers",
+        "stars": 298988,
+        "forks": 26729,
+        "pushed": "2026-10-10",
+        "url": "https://github.com/obra/superpowers",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "mattpocock/skills",
+        "stars": 290721,
+        "forks": 24396,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/mattpocock/skills",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "affaan-m/ECC",
+        "stars": 279034,
+        "forks": 41528,
+        "pushed": "2026-10-12",
+        "url": "https://github.com/affaan-m/ECC",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "multica-ai/andrej-karpathy-skills",
+        "stars": 219687,
+        "forks": 22095,
+        "pushed": "2026-04-20",
+        "url": "https://github.com/multica-ai/andrej-karpathy-skills",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "anthropics/skills",
+        "stars": 181073,
+        "forks": 21460,
+        "pushed": "2026-10-09",
+        "url": "https://github.com/anthropics/skills",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "DietrichGebert/ponytail",
+        "stars": 163305,
+        "forks": 8797,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/DietrichGebert/ponytail",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "msitarzewski/agency-agents",
+        "stars": 160021,
+        "forks": 25862,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/msitarzewski/agency-agents",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "github/spec-kit",
+        "stars": 141244,
+        "forks": 12642,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/github/spec-kit",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "garrytan/gstack",
+        "stars": 136381,
+        "forks": 20252,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/garrytan/gstack",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+        "stars": 135739,
+        "forks": 14428,
+        "pushed": "2026-10-12",
+        "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "VoltAgent/awesome-design-md",
+        "stars": 121272,
+        "forks": 13493,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/VoltAgent/awesome-design-md",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "stars": 106522,
+        "forks": 11088,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/addyosmani/agent-skills",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "stars": 96046,
+        "forks": 6528,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/Leonxlnx/taste-skill",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "tt-a1i/archify",
+        "stars": 83408,
+        "forks": 5639,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/tt-a1i/archify",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "pbakaus/impeccable",
+        "stars": 81058,
+        "forks": 4854,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/pbakaus/impeccable",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "ComposioHQ/awesome-claude-skills",
+        "stars": 77090,
+        "forks": 9092,
+        "pushed": "2026-09-18",
+        "url": "https://github.com/ComposioHQ/awesome-claude-skills",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "quran/quran.com-frontend-next",
+        "stars": 1924,
+        "forks": 631,
+        "pushed": "2026-04-27",
+        "url": "https://github.com/quran/quran.com-frontend-next",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "karanhudia/borg-ui",
+        "stars": 1661,
+        "forks": 58,
+        "pushed": "2026-10-12",
+        "url": "https://github.com/karanhudia/borg-ui",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "BiFangKNT/mtga",
+        "stars": 1170,
+        "forks": 126,
+        "pushed": "2026-06-18",
+        "url": "https://github.com/BiFangKNT/mtga",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "nevalang/neva",
+        "stars": 1084,
+        "forks": 40,
+        "pushed": "2026-08-23",
+        "url": "https://github.com/nevalang/neva",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "srid/emanote",
+        "stars": 964,
+        "forks": 80,
+        "pushed": "2026-07-26",
+        "url": "https://github.com/srid/emanote",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "ArtisanCloud/PowerX",
+        "stars": 382,
+        "forks": 70,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/ArtisanCloud/PowerX",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "shift-editor/shift",
+        "stars": 356,
+        "forks": 13,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/shift-editor/shift",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "membranedev/application-skills",
+        "stars": 267,
+        "forks": 42,
+        "pushed": "2026-04-28",
+        "url": "https://github.com/membranedev/application-skills",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "zacharyfmarion/openscad-studio",
+        "stars": 241,
+        "forks": 34,
+        "pushed": "2026-08-19",
+        "url": "https://github.com/zacharyfmarion/openscad-studio",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "theowenyoung/home",
+        "stars": 115,
+        "forks": 1,
+        "pushed": "2026-09-27",
+        "url": "https://github.com/theowenyoung/home",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "Sikao-Engine/KimiX",
+        "stars": 114,
+        "forks": 12,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/Sikao-Engine/KimiX",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "Dwlad90/stylex-swc-plugin",
+        "stars": 112,
+        "forks": 15,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/Dwlad90/stylex-swc-plugin",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "925236118/AlphaAgent",
+        "stars": 103,
+        "forks": 14,
+        "pushed": "2026-10-08",
+        "url": "https://github.com/925236118/AlphaAgent",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "AGI4Sci/SciForge",
+        "stars": 82,
+        "forks": 21,
+        "pushed": "2026-09-03",
+        "url": "https://github.com/AGI4Sci/SciForge",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "juspay/kolu",
+        "stars": 81,
+        "forks": 13,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/juspay/kolu",
+        "fork": false,
+        "category": "技能包",
+        "delta": null,
+        "week": null
+      }
+    ],
+    "省 token": [
+      {
+        "repo": "JuliusBrussee/caveman",
+        "stars": 111727,
+        "forks": 6484,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/JuliusBrussee/caveman",
+        "fork": false,
+        "category": "省 token",
+        "delta": null,
+        "week": null
+      },
+      {
+        "repo": "rtk-ai/rtk",
+        "stars": 83323,
+        "forks": 5289,
+        "pushed": "2026-10-14",
+        "url": "https://github.com/rtk-ai/rtk",
+        "fork": false,
+        "category": "省 token",
+        "delta": null,
+        "week": null
+      }
+    ],
+    "记忆": [
+      {
+        "repo": "thedotmack/claude-mem",
+        "stars": 100657,
+        "forks": 8820,
+        "pushed": "2026-10-13",
+        "url": "https://github.com/thedotmack/claude-mem",
+        "fork": false,
+        "category": "记忆",
+        "delta": null,
+        "week": null
+      }
+    ]
+  },
+  "failed": []
+}

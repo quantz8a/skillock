@@ -10,7 +10,6 @@ const PRODUCTS: &[(&str, &str)] = &[
     ("openclaw", "openclaw"),
     ("open code", "opencode"),
     ("opencode", "opencode"),
-    ("cursor", "cursor"),
     ("codex", "codex"),
     ("gemini", "gemini"),
     ("hermes", "hermes"),

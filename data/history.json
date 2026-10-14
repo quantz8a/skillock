@@ -1,0 +1,43 @@
+{
+  "points": [
+    {
+      "t": "2026-10-14T14:46:45+00:00",
+      "stars": {
+        "obra/superpowers": 298988,
+        "mattpocock/skills": 290721,
+        "affaan-m/ECC": 279034,
+        "multica-ai/andrej-karpathy-skills": 219687,
+        "anthropics/skills": 181073,
+        "DietrichGebert/ponytail": 163305,
+        "msitarzewski/agency-agents": 160021,
+        "github/spec-kit": 141244,
+        "garrytan/gstack": 136381,
+        "nextlevelbuilder/ui-ux-pro-max-skill": 135739,
+        "VoltAgent/awesome-design-md": 121272,
+        "addyosmani/agent-skills": 106522,
+        "Leonxlnx/taste-skill": 96046,
+        "tt-a1i/archify": 83408,
+        "pbakaus/impeccable": 81058,
+        "ComposioHQ/awesome-claude-skills": 77090,
+        "JuliusBrussee/caveman": 111727,
+        "rtk-ai/rtk": 83323,
+        "thedotmack/claude-mem": 100657,
+        "quran/quran.com-frontend-next": 1924,
+        "karanhudia/borg-ui": 1661,
+        "BiFangKNT/mtga": 1170,
+        "nevalang/neva": 1084,
+        "srid/emanote": 964,
+        "ArtisanCloud/PowerX": 382,
+        "shift-editor/shift": 356,
+        "membranedev/application-skills": 267,
+        "zacharyfmarion/openscad-studio": 241,
+        "theowenyoung/home": 115,
+        "Sikao-Engine/KimiX": 114,
+        "Dwlad90/stylex-swc-plugin": 112,
+        "925236118/AlphaAgent": 103,
+        "AGI4Sci/SciForge": 82,
+        "juspay/kolu": 81
+      }
+    }
+  ]
+}

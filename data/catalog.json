@@ -1,0 +1,21 @@
+[
+  {"repo": "obra/superpowers", "category": "技能包"},
+  {"repo": "mattpocock/skills", "category": "技能包"},
+  {"repo": "affaan-m/ECC", "category": "技能包"},
+  {"repo": "multica-ai/andrej-karpathy-skills", "category": "技能包"},
+  {"repo": "anthropics/skills", "category": "技能包"},
+  {"repo": "DietrichGebert/ponytail", "category": "技能包"},
+  {"repo": "msitarzewski/agency-agents", "category": "技能包"},
+  {"repo": "github/spec-kit", "category": "技能包"},
+  {"repo": "garrytan/gstack", "category": "技能包"},
+  {"repo": "nextlevelbuilder/ui-ux-pro-max-skill", "category": "技能包"},
+  {"repo": "VoltAgent/awesome-design-md", "category": "技能包"},
+  {"repo": "addyosmani/agent-skills", "category": "技能包"},
+  {"repo": "Leonxlnx/taste-skill", "category": "技能包"},
+  {"repo": "tt-a1i/archify", "category": "技能包"},
+  {"repo": "pbakaus/impeccable", "category": "技能包"},
+  {"repo": "ComposioHQ/awesome-claude-skills", "category": "技能包"},
+  {"repo": "JuliusBrussee/caveman", "category": "省 token"},
+  {"repo": "rtk-ai/rtk", "category": "省 token"},
+  {"repo": "thedotmack/claude-mem", "category": "记忆"}
+]
