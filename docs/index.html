@@ -4,55 +4,230 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hana · 技能测评</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root { color-scheme: light; }
-  body { margin: 0; background: #E6E0D4; color: #161616; font: 16px/1.45 "Iowan Old Style", Palatino, "Songti SC", serif; }
-  main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 64px; }
-  header { display: flex; gap: 20px; align-items: center; }
-  img { width: 88px; height: 88px; }
-  h1 { font-size: 32px; margin: 0; letter-spacing: -0.03em; }
-  h2 { font-size: 20px; margin: 36px 0 8px; }
-  p { margin: 8px 0; }
-  a { color: #2A45F5; }
-  .meta { color: #3a342c; }
-  .install { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
-  code { font: 14px/1.4 ui-monospace, monospace; background: #f4f0e8; padding: 4px 8px; }
-  button { font: 14px/1 ui-sans-serif, sans-serif; color: #E6E0D4; background: #2A45F5; border: 0; padding: 8px 12px; cursor: pointer; }
-  table { width: 100%; border-collapse: collapse; background: #f4f0e8; }
-  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #d9d1c3; vertical-align: top; }
-  th { font: 12px/1.2 ui-sans-serif, sans-serif; letter-spacing: 0.04em; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #E6E0D4;
+    color: #161616;
+    font: 16px/1.45 "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 12px 24px 80px; }
+  a { color: inherit; }
+  .hero {
+    display: grid;
+    grid-template-columns: 188px 1fr;
+    gap: 28px;
+    align-items: end;
+    padding: 28px 0 32px;
+  }
+  .hero img { width: 188px; height: 188px; display: block; }
+  .kicker {
+    margin: 0 0 8px;
+    color: #2A45F5;
+    font: 700 13px/1 Unbounded, "Noto Sans SC", sans-serif;
+    letter-spacing: 0.16em;
+  }
+  h1 {
+    margin: 0;
+    font: 700 clamp(64px, 9vw, 104px)/0.86 Unbounded, "Noto Sans SC", sans-serif;
+    letter-spacing: -0.045em;
+  }
+  .bar { width: 76px; height: 8px; margin: 16px 0 14px; background: #E24A2A; }
+  .lede { margin: 0; max-width: 34rem; font-size: 18px; }
+  .meta { margin: 8px 0 0; color: #3a342c; font-size: 14px; }
+  .install {
+    display: flex;
+    width: min(100%, 640px);
+    margin-top: 18px;
+    border: 2px solid #161616;
+  }
+  code {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    background: transparent;
+    font: 13px/1.4 ui-monospace, "SFMono-Regular", monospace;
+    white-space: nowrap;
+  }
+  button {
+    flex: none;
+    border: 0;
+    border-left: 2px solid #161616;
+    background: #2A45F5;
+    color: #E6E0D4;
+    padding: 0 16px;
+    font: 700 14px/1 "Noto Sans SC", sans-serif;
+    cursor: pointer;
+  }
+  button:hover { background: #161616; }
+  .jump {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    margin: 0 -24px;
+    padding: 0 12px;
+    background: #E6E0D4;
+    border-bottom: 2px solid #161616;
+  }
+  .jump a {
+    flex: none;
+    padding: 12px;
+    color: #161616;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .jump a:hover { background: #161616; color: #E6E0D4; }
+  section { padding-top: 8px; }
+  .cat {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 36px 0 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #161616;
+  }
+  .cat span {
+    color: #2A45F5;
+    font: 700 14px/1 Unbounded, sans-serif;
+  }
+  h2 {
+    margin: 0;
+    font: 700 32px/1 Unbounded, "Noto Sans SC", sans-serif;
+    letter-spacing: -0.04em;
+  }
+  ol { list-style: none; margin: 0; padding: 0; }
+  li {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto auto;
+    grid-template-areas: "place who stat go" "place facts stat go";
+    column-gap: 16px;
+    align-items: center;
+    padding: 16px 0 14px;
+    border-bottom: 1px solid rgba(22, 22, 22, 0.16);
+  }
+  .place {
+    grid-area: place;
+    font: 700 18px/1 Unbounded, sans-serif;
+  }
+  li:first-child .place { color: #E24A2A; }
+  .who { grid-area: who; min-width: 0; }
+  .skill {
+    display: block;
+    overflow: hidden;
+    color: #161616;
+    font-weight: 700;
+    font-size: 18px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .skill:hover { color: #2A45F5; }
+  .repo {
+    display: block;
+    overflow: hidden;
+    color: #3a342c;
+    font-size: 13px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .facts {
+    grid-area: facts;
+    margin: 2px 0 0;
+    color: #3a342c;
+    font-size: 13px;
+  }
+  .ok { color: #161616; }
+  .bad { color: #E24A2A; }
+  .stat { grid-area: stat; text-align: right; }
+  .stat b {
+    display: block;
+    font: 700 28px/1 Unbounded, sans-serif;
+    letter-spacing: -0.04em;
+  }
+  .delta, .stat small {
+    color: #3a342c;
+    font: 12px/1.2 "Noto Sans SC", sans-serif;
+  }
+  .stat small { display: block; margin-top: 4px; letter-spacing: 0.08em; }
+  li button { grid-area: go; height: 40px; }
+  .empty, .fail { margin: 16px 0; }
   .fail { color: #E24A2A; }
+  @media (max-width: 720px) {
+    .place { align-self: start; padding-top: 3px; }
+    .hero { grid-template-columns: 1fr; gap: 8px; }
+    .hero img { width: 120px; height: 120px; }
+    h1 { font-size: 64px; }
+    .install { width: 100%; }
+    li {
+      grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+      grid-template-areas: "place who go" "place facts facts" "place stat stat";
+      row-gap: 6px;
+    }
+    .stat { text-align: left; }
+    .stat b { display: inline; margin-right: 8px; font-size: 22px; }
+    .stat small { display: inline; }
+  }
 </style>
 </head>
 <body>
 <main>
-<header>
+<header class="hero">
   <img src="hana.jpg" alt="Hana">
   <div>
-    <h1>技能测评</h1>
-    <p class="meta">测评时间 2026-10-14 16:02 UTC · 每 6 小时一次 · 界面设计、省 token、记忆、规划、审查、测试、调试、研究、文档、安全</p>
-    <p class="meta">同一份正文只保留星数最高的那一处。排名按启动 token 从高到低。<a href="https://github.com/quantz8a/skillock">skillock</a> 不在榜上。</p>
+    <p class="kicker">SKILLOCK</p>
+    <h1>Hana</h1>
+    <div class="bar"></div>
+    <p class="lede">公开技能按启动 token 排名。数字越大，装进去越占上下文。</p>
+    <p class="meta">2026-10-14 16:02 UTC · 每 6 小时重测 · 同一份正文只留星数最高的一份 · <a href="https://github.com/quantz8a/skillock">skillock 不在榜上</a></p>
+    <div class="install"><code>npx skills add quantz8a/skillock -g -y</code><button type="button" data-cmd="npx skills add quantz8a/skillock -g -y">安装 Hana</button></div>
   </div>
 </header>
-<p class="install"><code>npx skills add quantz8a/skillock -g -y</code><button type="button" data-cmd="npx skills add quantz8a/skillock -g -y">安装 Hana</button></p>
-<h2>界面设计</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/pbakaus/impeccable/blob/main/.opencode/skills/impeccable/SKILL.md">impeccable</a></td><td><button type="button" data-cmd="npx skills add https://github.com/pbakaus/impeccable/tree/main/.opencode/skills/impeccable -g -y">安装</button></td><td><a href="https://github.com/pbakaus/impeccable">pbakaus/impeccable</a></td><td class="num">81,086</td><td class="num">241</td><td class="num">3,052</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-web/SKILL.md">imagegen-frontend-web</a></td><td><button type="button" data-cmd="npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-web -g -y">安装</button></td><td><a href="https://github.com/Leonxlnx/taste-skill">Leonxlnx/taste-skill</a></td><td class="num">96,140</td><td class="num">181</td><td class="num">9,858</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td>body-budget 1</td></tr><tr><td>3</td><td><a href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-mobile/SKILL.md">imagegen-frontend-mobile</a></td><td><button type="button" data-cmd="npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-mobile -g -y">安装</button></td><td><a href="https://github.com/Leonxlnx/taste-skill">Leonxlnx/taste-skill</a></td><td class="num">96,140</td><td class="num">178</td><td class="num">10,796</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td>body-budget 1</td></tr><tr><td>4</td><td><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/design/SKILL.md">design</a></td><td><button type="button" data-cmd="npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/design -g -y">安装</button></td><td><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">nextlevelbuilder/ui-ux-pro-max-skill</a></td><td class="num">135,753</td><td class="num">174</td><td class="num">3,606</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr><tr><td>5</td><td><a href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/image-to-code-skill/SKILL.md">image-to-code</a></td><td><button type="button" data-cmd="npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/image-to-code-skill -g -y">安装</button></td><td><a href="https://github.com/Leonxlnx/taste-skill">Leonxlnx/taste-skill</a></td><td class="num">96,140</td><td class="num">155</td><td class="num">9,763</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td>spec-dir 1, body-budget 1</td></tr><tr><td>6</td><td><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-ux-pro-max/SKILL.md">ui-ux-pro-max</a></td><td><button type="button" data-cmd="npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-ux-pro-max -g -y">安装</button></td><td><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">nextlevelbuilder/ui-ux-pro-max-skill</a></td><td class="num">135,753</td><td class="num">136</td><td class="num">4,146</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr><tr><td>7</td><td><a href="https://github.com/affaan-m/ECC/blob/main/skills/taste/SKILL.md">taste</a></td><td><button type="button" data-cmd="npx skills add https://github.com/affaan-m/ECC/tree/main/skills/taste -g -y">安装</button></td><td><a href="https://github.com/affaan-m/ECC">affaan-m/ECC</a></td><td class="num">279,101</td><td class="num">131</td><td class="num">4,060</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr><tr><td>8</td><td><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-styling/SKILL.md">ui-styling</a></td><td><button type="button" data-cmd="npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-styling -g -y">安装</button></td><td><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">nextlevelbuilder/ui-ux-pro-max-skill</a></td><td class="num">135,753</td><td class="num">130</td><td class="num">2,671</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr></tbody></table>
-<h2>省 token</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/JuliusBrussee/caveman/blob/main/plugins/caveman/skills/caveman/SKILL.md">caveman</a></td><td><button type="button" data-cmd="npx skills add https://github.com/JuliusBrussee/caveman/tree/main/plugins/caveman/skills/caveman -g -y">安装</button></td><td><a href="https://github.com/JuliusBrussee/caveman">JuliusBrussee/caveman</a></td><td class="num">111,769</td><td class="num">60</td><td class="num">1,191</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/DietrichGebert/ponytail/blob/main/.openclaw/skills/ponytail/SKILL.md">ponytail</a></td><td><button type="button" data-cmd="npx skills add https://github.com/DietrichGebert/ponytail/tree/main/.openclaw/skills/ponytail -g -y">安装</button></td><td><a href="https://github.com/DietrichGebert/ponytail">DietrichGebert/ponytail</a></td><td class="num">163,338</td><td class="num">39</td><td class="num">808</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr></tbody></table>
-<h2>记忆</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/thedotmack/claude-mem/blob/main/cowork/skills/mem-setup/SKILL.md">mem-setup</a></td><td><button type="button" data-cmd="npx skills add https://github.com/thedotmack/claude-mem/tree/main/cowork/skills/mem-setup -g -y">安装</button></td><td><a href="https://github.com/thedotmack/claude-mem">thedotmack/claude-mem</a></td><td class="num">100,684</td><td class="num">78</td><td class="num">681</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/thedotmack/claude-mem/blob/main/plugin/skills/mem-search/SKILL.md">mem-search</a></td><td><button type="button" data-cmd="npx skills add https://github.com/thedotmack/claude-mem/tree/main/plugin/skills/mem-search -g -y">安装</button></td><td><a href="https://github.com/thedotmack/claude-mem">thedotmack/claude-mem</a></td><td class="num">100,684</td><td class="num">51</td><td class="num">1,433</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr></tbody></table>
-<h2>规划</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/obra/superpowers/blob/main/skills/brainstorming/SKILL.md">brainstorming</a></td><td><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/brainstorming -g -y">安装</button></td><td><a href="https://github.com/obra/superpowers">obra/superpowers</a></td><td class="num">299,016</td><td class="num">61</td><td class="num">2,636</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/obra/superpowers/blob/main/skills/executing-plans/SKILL.md">executing-plans</a></td><td><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/executing-plans -g -y">安装</button></td><td><a href="https://github.com/obra/superpowers">obra/superpowers</a></td><td class="num">299,016</td><td class="num">50</td><td class="num">5,372</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td>body-budget 1</td></tr><tr><td>3</td><td><a href="https://github.com/obra/superpowers/blob/main/skills/writing-plans/SKILL.md">writing-plans</a></td><td><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/writing-plans -g -y">安装</button></td><td><a href="https://github.com/obra/superpowers">obra/superpowers</a></td><td class="num">299,016</td><td class="num">26</td><td class="num">2,697</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>通过</td></tr></tbody></table>
-<h2>审查</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md">code-review</a></td><td><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/code-review -g -y">安装</button></td><td><a href="https://github.com/mattpocock/skills">mattpocock/skills</a></td><td class="num">290,810</td><td class="num">115</td><td class="num">1,647</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/obra/superpowers/blob/main/skills/receiving-code-review/SKILL.md">receiving-code-review</a></td><td><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/receiving-code-review -g -y">安装</button></td><td><a href="https://github.com/obra/superpowers">obra/superpowers</a></td><td class="num">299,016</td><td class="num">69</td><td class="num">1,577</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>3</td><td><a href="https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/SKILL.md">requesting-code-review</a></td><td><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/requesting-code-review -g -y">安装</button></td><td><a href="https://github.com/obra/superpowers">obra/superpowers</a></td><td class="num">299,016</td><td class="num">35</td><td class="num">749</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr></tbody></table>
-<h2>测试</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/anthropics/skills/blob/main/skills/webapp-testing/SKILL.md">webapp-testing</a></td><td><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/webapp-testing -g -y">安装</button></td><td><a href="https://github.com/anthropics/skills">anthropics/skills</a></td><td class="num">181,089</td><td class="num">58</td><td class="num">914</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md">tdd</a></td><td><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd -g -y">安装</button></td><td><a href="https://github.com/mattpocock/skills">mattpocock/skills</a></td><td class="num">290,810</td><td class="num">40</td><td class="num">918</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>3</td><td><a href="https://github.com/obra/superpowers/blob/main/skills/test-driven-development/SKILL.md">test-driven-development</a></td><td><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/test-driven-development -g -y">安装</button></td><td><a href="https://github.com/obra/superpowers">obra/superpowers</a></td><td class="num">299,016</td><td class="num">26</td><td class="num">2,553</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr></tbody></table>
-<h2>调试</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/diagnosing-bugs/SKILL.md">diagnosing-bugs</a></td><td><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/diagnosing-bugs -g -y">安装</button></td><td><a href="https://github.com/mattpocock/skills">mattpocock/skills</a></td><td class="num">290,810</td><td class="num">44</td><td class="num">2,271</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md">systematic-debugging</a></td><td><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/systematic-debugging -g -y">安装</button></td><td><a href="https://github.com/obra/superpowers">obra/superpowers</a></td><td class="num">299,016</td><td class="num">29</td><td class="num">2,484</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr></tbody></table>
-<h2>研究</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/affaan-m/ECC/blob/main/skills/deep-research/SKILL.md">deep-research</a></td><td><button type="button" data-cmd="npx skills add https://github.com/affaan-m/ECC/tree/main/skills/deep-research -g -y">安装</button></td><td><a href="https://github.com/affaan-m/ECC">affaan-m/ECC</a></td><td class="num">279,101</td><td class="num">110</td><td class="num">1,493</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/research/SKILL.md">research</a></td><td><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/research -g -y">安装</button></td><td><a href="https://github.com/mattpocock/skills">mattpocock/skills</a></td><td class="num">290,810</td><td class="num">67</td><td class="num">142</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr></tbody></table>
-<h2>文档</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/anthropics/skills/blob/main/skills/xlsx/SKILL.md">xlsx</a></td><td><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/xlsx -g -y">安装</button></td><td><a href="https://github.com/anthropics/skills">anthropics/skills</a></td><td class="num">181,089</td><td class="num">254</td><td class="num">2,033</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>2</td><td><a href="https://github.com/anthropics/skills/blob/main/skills/docx/SKILL.md">docx</a></td><td><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/docx -g -y">安装</button></td><td><a href="https://github.com/anthropics/skills">anthropics/skills</a></td><td class="num">181,089</td><td class="num">227</td><td class="num">1,606</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr><tr><td>3</td><td><a href="https://github.com/anthropics/skills/blob/main/skills/pptx/SKILL.md">pptx</a></td><td><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/pptx -g -y">安装</button></td><td><a href="https://github.com/anthropics/skills">anthropics/skills</a></td><td class="num">181,089</td><td class="num">201</td><td class="num">5,377</td><td class="num">0</td><td class="num">1</td><td class="num">—</td><td>body-budget 1</td></tr></tbody></table>
-<h2>安全</h2><table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead><tbody><tr><td>1</td><td><a href="https://github.com/affaan-m/ECC/blob/main/pi/core/skills/agent-security-hardening/SKILL.md">agent-security-hardening</a></td><td><button type="button" data-cmd="npx skills add https://github.com/affaan-m/ECC/tree/main/pi/core/skills/agent-security-hardening -g -y">安装</button></td><td><a href="https://github.com/affaan-m/ECC">affaan-m/ECC</a></td><td class="num">279,101</td><td class="num">104</td><td class="num">2,688</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td>通过</td></tr></tbody></table>
+<nav class="jump"><a href="#c1">界面设计</a><a href="#c2">省 token</a><a href="#c3">记忆</a><a href="#c4">规划</a><a href="#c5">审查</a><a href="#c6">测试</a><a href="#c7">调试</a><a href="#c8">研究</a><a href="#c9">文档</a><a href="#c10">安全</a></nav>
+<section id="c1"><header class="cat"><span>01</span><h2>界面设计</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/pbakaus/impeccable/blob/main/.opencode/skills/impeccable/SKILL.md">impeccable</a><a class="repo" href="https://github.com/pbakaus/impeccable">pbakaus/impeccable</a></div><p class="facts">正文 3,052 · 星 81,086 · <span class="ok">通过</span></p><div class="stat"><b>241</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/pbakaus/impeccable/tree/main/.opencode/skills/impeccable -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-web/SKILL.md">imagegen-frontend-web</a><a class="repo" href="https://github.com/Leonxlnx/taste-skill">Leonxlnx/taste-skill</a></div><p class="facts">正文 9,858 · 星 96,140 · <span class="bad">body-budget 1</span></p><div class="stat"><b>181</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-web -g -y">安装</button></li><li><span class="place">3</span><div class="who"><a class="skill" href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-mobile/SKILL.md">imagegen-frontend-mobile</a><a class="repo" href="https://github.com/Leonxlnx/taste-skill">Leonxlnx/taste-skill</a></div><p class="facts">正文 10,796 · 星 96,140 · <span class="bad">body-budget 1</span></p><div class="stat"><b>178</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-mobile -g -y">安装</button></li><li><span class="place">4</span><div class="who"><a class="skill" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/design/SKILL.md">design</a><a class="repo" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">nextlevelbuilder/ui-ux-pro-max-skill</a></div><p class="facts">正文 3,606 · 星 135,753 · <span class="ok">通过</span></p><div class="stat"><b>174</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/design -g -y">安装</button></li><li><span class="place">5</span><div class="who"><a class="skill" href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/image-to-code-skill/SKILL.md">image-to-code</a><a class="repo" href="https://github.com/Leonxlnx/taste-skill">Leonxlnx/taste-skill</a></div><p class="facts">正文 9,763 · 星 96,140 · <span class="bad">spec-dir 1, body-budget 1</span></p><div class="stat"><b>155</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/image-to-code-skill -g -y">安装</button></li><li><span class="place">6</span><div class="who"><a class="skill" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-ux-pro-max/SKILL.md">ui-ux-pro-max</a><a class="repo" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">nextlevelbuilder/ui-ux-pro-max-skill</a></div><p class="facts">正文 4,146 · 星 135,753 · <span class="ok">通过</span></p><div class="stat"><b>136</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-ux-pro-max -g -y">安装</button></li><li><span class="place">7</span><div class="who"><a class="skill" href="https://github.com/affaan-m/ECC/blob/main/skills/taste/SKILL.md">taste</a><a class="repo" href="https://github.com/affaan-m/ECC">affaan-m/ECC</a></div><p class="facts">正文 4,060 · 星 279,101 · <span class="ok">通过</span></p><div class="stat"><b>131</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/affaan-m/ECC/tree/main/skills/taste -g -y">安装</button></li><li><span class="place">8</span><div class="who"><a class="skill" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-styling/SKILL.md">ui-styling</a><a class="repo" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">nextlevelbuilder/ui-ux-pro-max-skill</a></div><p class="facts">正文 2,671 · 星 135,753 · <span class="ok">通过</span></p><div class="stat"><b>130</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-styling -g -y">安装</button></li></ol></section>
+<section id="c2"><header class="cat"><span>02</span><h2>省 token</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/JuliusBrussee/caveman/blob/main/plugins/caveman/skills/caveman/SKILL.md">caveman</a><a class="repo" href="https://github.com/JuliusBrussee/caveman">JuliusBrussee/caveman</a></div><p class="facts">正文 1,191 · 星 111,769 · <span class="ok">通过</span></p><div class="stat"><b>60</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/JuliusBrussee/caveman/tree/main/plugins/caveman/skills/caveman -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/DietrichGebert/ponytail/blob/main/.openclaw/skills/ponytail/SKILL.md">ponytail</a><a class="repo" href="https://github.com/DietrichGebert/ponytail">DietrichGebert/ponytail</a></div><p class="facts">正文 808 · 星 163,338 · <span class="ok">通过</span></p><div class="stat"><b>39</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/DietrichGebert/ponytail/tree/main/.openclaw/skills/ponytail -g -y">安装</button></li></ol></section>
+<section id="c3"><header class="cat"><span>03</span><h2>记忆</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/thedotmack/claude-mem/blob/main/cowork/skills/mem-setup/SKILL.md">mem-setup</a><a class="repo" href="https://github.com/thedotmack/claude-mem">thedotmack/claude-mem</a></div><p class="facts">正文 681 · 星 100,684 · <span class="ok">通过</span></p><div class="stat"><b>78</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/thedotmack/claude-mem/tree/main/cowork/skills/mem-setup -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/thedotmack/claude-mem/blob/main/plugin/skills/mem-search/SKILL.md">mem-search</a><a class="repo" href="https://github.com/thedotmack/claude-mem">thedotmack/claude-mem</a></div><p class="facts">正文 1,433 · 星 100,684 · <span class="ok">通过</span></p><div class="stat"><b>51</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/thedotmack/claude-mem/tree/main/plugin/skills/mem-search -g -y">安装</button></li></ol></section>
+<section id="c4"><header class="cat"><span>04</span><h2>规划</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/obra/superpowers/blob/main/skills/brainstorming/SKILL.md">brainstorming</a><a class="repo" href="https://github.com/obra/superpowers">obra/superpowers</a></div><p class="facts">正文 2,636 · 星 299,016 · <span class="ok">通过</span></p><div class="stat"><b>61</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/brainstorming -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/obra/superpowers/blob/main/skills/executing-plans/SKILL.md">executing-plans</a><a class="repo" href="https://github.com/obra/superpowers">obra/superpowers</a></div><p class="facts">正文 5,372 · 星 299,016 · <span class="bad">body-budget 1</span></p><div class="stat"><b>50</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/executing-plans -g -y">安装</button></li><li><span class="place">3</span><div class="who"><a class="skill" href="https://github.com/obra/superpowers/blob/main/skills/writing-plans/SKILL.md">writing-plans</a><a class="repo" href="https://github.com/obra/superpowers">obra/superpowers</a></div><p class="facts">正文 2,697 · 星 299,016 · <span class="ok">通过</span></p><div class="stat"><b>26</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/writing-plans -g -y">安装</button></li></ol></section>
+<section id="c5"><header class="cat"><span>05</span><h2>审查</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md">code-review</a><a class="repo" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div><p class="facts">正文 1,647 · 星 290,810 · <span class="ok">通过</span></p><div class="stat"><b>115</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/code-review -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/obra/superpowers/blob/main/skills/receiving-code-review/SKILL.md">receiving-code-review</a><a class="repo" href="https://github.com/obra/superpowers">obra/superpowers</a></div><p class="facts">正文 1,577 · 星 299,016 · <span class="ok">通过</span></p><div class="stat"><b>69</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/receiving-code-review -g -y">安装</button></li><li><span class="place">3</span><div class="who"><a class="skill" href="https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/SKILL.md">requesting-code-review</a><a class="repo" href="https://github.com/obra/superpowers">obra/superpowers</a></div><p class="facts">正文 749 · 星 299,016 · <span class="ok">通过</span></p><div class="stat"><b>35</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/requesting-code-review -g -y">安装</button></li></ol></section>
+<section id="c6"><header class="cat"><span>06</span><h2>测试</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/anthropics/skills/blob/main/skills/webapp-testing/SKILL.md">webapp-testing</a><a class="repo" href="https://github.com/anthropics/skills">anthropics/skills</a></div><p class="facts">正文 914 · 星 181,089 · <span class="ok">通过</span></p><div class="stat"><b>58</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/webapp-testing -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md">tdd</a><a class="repo" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div><p class="facts">正文 918 · 星 290,810 · <span class="ok">通过</span></p><div class="stat"><b>40</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd -g -y">安装</button></li><li><span class="place">3</span><div class="who"><a class="skill" href="https://github.com/obra/superpowers/blob/main/skills/test-driven-development/SKILL.md">test-driven-development</a><a class="repo" href="https://github.com/obra/superpowers">obra/superpowers</a></div><p class="facts">正文 2,553 · 星 299,016 · <span class="ok">通过</span></p><div class="stat"><b>26</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/test-driven-development -g -y">安装</button></li></ol></section>
+<section id="c7"><header class="cat"><span>07</span><h2>调试</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/mattpocock/skills/blob/main/skills/engineering/diagnosing-bugs/SKILL.md">diagnosing-bugs</a><a class="repo" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div><p class="facts">正文 2,271 · 星 290,810 · <span class="ok">通过</span></p><div class="stat"><b>44</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/diagnosing-bugs -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md">systematic-debugging</a><a class="repo" href="https://github.com/obra/superpowers">obra/superpowers</a></div><p class="facts">正文 2,484 · 星 299,016 · <span class="ok">通过</span></p><div class="stat"><b>29</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/obra/superpowers/tree/main/skills/systematic-debugging -g -y">安装</button></li></ol></section>
+<section id="c8"><header class="cat"><span>08</span><h2>研究</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/affaan-m/ECC/blob/main/skills/deep-research/SKILL.md">deep-research</a><a class="repo" href="https://github.com/affaan-m/ECC">affaan-m/ECC</a></div><p class="facts">正文 1,493 · 星 279,101 · <span class="ok">通过</span></p><div class="stat"><b>110</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/affaan-m/ECC/tree/main/skills/deep-research -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/mattpocock/skills/blob/main/skills/engineering/research/SKILL.md">research</a><a class="repo" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div><p class="facts">正文 142 · 星 290,810 · <span class="ok">通过</span></p><div class="stat"><b>67</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/research -g -y">安装</button></li></ol></section>
+<section id="c9"><header class="cat"><span>09</span><h2>文档</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/anthropics/skills/blob/main/skills/xlsx/SKILL.md">xlsx</a><a class="repo" href="https://github.com/anthropics/skills">anthropics/skills</a></div><p class="facts">正文 2,033 · 星 181,089 · <span class="ok">通过</span></p><div class="stat"><b>254</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/xlsx -g -y">安装</button></li><li><span class="place">2</span><div class="who"><a class="skill" href="https://github.com/anthropics/skills/blob/main/skills/docx/SKILL.md">docx</a><a class="repo" href="https://github.com/anthropics/skills">anthropics/skills</a></div><p class="facts">正文 1,606 · 星 181,089 · <span class="ok">通过</span></p><div class="stat"><b>227</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/docx -g -y">安装</button></li><li><span class="place">3</span><div class="who"><a class="skill" href="https://github.com/anthropics/skills/blob/main/skills/pptx/SKILL.md">pptx</a><a class="repo" href="https://github.com/anthropics/skills">anthropics/skills</a></div><p class="facts">正文 5,377 · 星 181,089 · <span class="bad">body-budget 1</span></p><div class="stat"><b>201</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/anthropics/skills/tree/main/skills/pptx -g -y">安装</button></li></ol></section>
+<section id="c10"><header class="cat"><span>10</span><h2>安全</h2></header><ol><li><span class="place">1</span><div class="who"><a class="skill" href="https://github.com/affaan-m/ECC/blob/main/pi/core/skills/agent-security-hardening/SKILL.md">agent-security-hardening</a><a class="repo" href="https://github.com/affaan-m/ECC">affaan-m/ECC</a></div><p class="facts">正文 2,688 · 星 279,101 · <span class="ok">通过</span></p><div class="stat"><b>104</b><small>启动</small></div><button type="button" data-cmd="npx skills add https://github.com/affaan-m/ECC/tree/main/pi/core/skills/agent-security-hardening -g -y">安装</button></li></ol></section>
 
 </main>
 <script>
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text).catch(function () { return fallbackCopy(text); });
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  var area = document.createElement("textarea");
+  area.value = text;
+  area.setAttribute("readonly", "");
+  area.style.position = "fixed";
+  area.style.left = "-9999px";
+  document.body.appendChild(area);
+  area.select();
+  var ok = document.execCommand("copy");
+  area.remove();
+  return ok ? Promise.resolve() : Promise.reject();
+}
 document.querySelectorAll("[data-cmd]").forEach(function (btn) {
   btn.addEventListener("click", function () {
-    navigator.clipboard.writeText(btn.getAttribute("data-cmd")).then(function () {
-      var old = btn.textContent;
+    var old = btn.textContent;
+    copyText(btn.getAttribute("data-cmd")).then(function () {
       btn.textContent = "已复制";
       setTimeout(function () { btn.textContent = old; }, 1200);
     });

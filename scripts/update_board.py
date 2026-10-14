@@ -437,38 +437,52 @@ def readme_block(categories, updated):
     return "\n".join(parts).rstrip() + "\n"
 
 
-def html_table(title, rows):
-    body = []
-    for i, row in enumerate(rows, start=1):
-        command = escape(row["install"], quote=True)
-        body.append(
-            "<tr>"
-            f"<td>{i}</td>"
-            f"<td><a href=\"{escape(row['file_url'])}\">{escape(row['name'])}</a></td>"
-            f"<td><button type=\"button\" data-cmd=\"{command}\">安装</button></td>"
-            f"<td><a href=\"{escape(row['url'])}\">{escape(row['repo'])}</a></td>"
-            f"<td class=\"num\">{fmt(row['stars'])}</td>"
-            f"<td class=\"num\">{fmt(row['startup_tokens'])}</td>"
-            f"<td class=\"num\">{fmt(row['body_tokens'])}</td>"
-            f"<td class=\"num\">{row['errors']}</td>"
-            f"<td class=\"num\">{row['warnings']}</td>"
-            f"<td class=\"num\">{escape(delta_text(row['delta']))}</td>"
-            f"<td>{escape(row['codes'])}</td>"
-            "</tr>"
-        )
-    empty = '<tr><td colspan="11">这一期没有测到。</td></tr>'
+def html_row(index, row):
+    command = escape(row["install"], quote=True)
+    tone = "ok" if row["errors"] == 0 and row["codes"] == "通过" else "bad"
+    change = ""
+    if row.get("delta") not in (None, 0):
+        change = f' · 较上次 {escape(delta_text(row["delta"]))}'
     return (
-        f"<h2>{escape(title)}</h2>"
-        "<table><thead><tr><th>#</th><th>技能</th><th>安装</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead>"
-        f"<tbody>{''.join(body) or empty}</tbody></table>"
+        "<li>"
+        f'<span class="place">{index}</span>'
+        '<div class="who">'
+        f'<a class="skill" href="{escape(row["file_url"])}">{escape(row["name"])}</a>'
+        f'<a class="repo" href="{escape(row["url"])}">{escape(row["repo"])}</a>'
+        "</div>"
+        f'<p class="facts">正文 {fmt(row["body_tokens"])} · 星 {fmt(row["stars"])} · <span class="{tone}">{escape(row["codes"])}</span>{change}</p>'
+        '<div class="stat">'
+        f"<b>{fmt(row['startup_tokens'])}</b><small>启动</small>"
+        "</div>"
+        f'<button type="button" data-cmd="{command}">安装</button>'
+        "</li>"
+    )
+
+
+def html_section(index, category):
+    rows = category["rows"]
+    body = "".join(html_row(i, row) for i, row in enumerate(rows, start=1))
+    if not body:
+        body = f'<p class="empty">这一期没有测到{escape(category["title"])}技能。</p>'
+    return (
+        f'<section id="c{index}">'
+        '<header class="cat">'
+        f'<span>{index:02d}</span>'
+        f"<h2>{escape(category['title'])}</h2>"
+        "</header>"
+        f"<ol>{body}</ol>"
+        "</section>"
     )
 
 
 def html_page(categories, failed, updated):
-    tables = "\n".join(html_table(category["title"], category["rows"]) for category in categories)
+    sections = "\n".join(html_section(i, category) for i, category in enumerate(categories, start=1))
+    jumps = "".join(
+        f'<a href="#c{i}">{escape(category["title"])}</a>' for i, category in enumerate(categories, start=1)
+    )
     fail_html = ""
     if failed:
-        fail_html = "<p class=\"fail\">没测到：" + escape(", ".join(failed)) + "</p>"
+        fail_html = '<p class="fail">没测到：' + escape(", ".join(failed)) + "</p>"
     command = escape(INSTALL, quote=True)
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -476,46 +490,221 @@ def html_page(categories, failed, updated):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hana · 技能测评</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {{ color-scheme: light; }}
-  body {{ margin: 0; background: #E6E0D4; color: #161616; font: 16px/1.45 "Iowan Old Style", Palatino, "Songti SC", serif; }}
-  main {{ max-width: 1180px; margin: 0 auto; padding: 32px 20px 64px; }}
-  header {{ display: flex; gap: 20px; align-items: center; }}
-  img {{ width: 88px; height: 88px; }}
-  h1 {{ font-size: 32px; margin: 0; letter-spacing: -0.03em; }}
-  h2 {{ font-size: 20px; margin: 36px 0 8px; }}
-  p {{ margin: 8px 0; }}
-  a {{ color: #2A45F5; }}
-  .meta {{ color: #3a342c; }}
-  .install {{ display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 16px; }}
-  code {{ font: 14px/1.4 ui-monospace, monospace; background: #f4f0e8; padding: 4px 8px; }}
-  button {{ font: 14px/1 ui-sans-serif, sans-serif; color: #E6E0D4; background: #2A45F5; border: 0; padding: 8px 12px; cursor: pointer; }}
-  table {{ width: 100%; border-collapse: collapse; background: #f4f0e8; }}
-  th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid #d9d1c3; vertical-align: top; }}
-  th {{ font: 12px/1.2 ui-sans-serif, sans-serif; letter-spacing: 0.04em; }}
-  td.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
+  * {{ box-sizing: border-box; }}
+  body {{
+    margin: 0;
+    background: #E6E0D4;
+    color: #161616;
+    font: 16px/1.45 "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  }}
+  main {{ max-width: 980px; margin: 0 auto; padding: 12px 24px 80px; }}
+  a {{ color: inherit; }}
+  .hero {{
+    display: grid;
+    grid-template-columns: 188px 1fr;
+    gap: 28px;
+    align-items: end;
+    padding: 28px 0 32px;
+  }}
+  .hero img {{ width: 188px; height: 188px; display: block; }}
+  .kicker {{
+    margin: 0 0 8px;
+    color: #2A45F5;
+    font: 700 13px/1 Unbounded, "Noto Sans SC", sans-serif;
+    letter-spacing: 0.16em;
+  }}
+  h1 {{
+    margin: 0;
+    font: 700 clamp(64px, 9vw, 104px)/0.86 Unbounded, "Noto Sans SC", sans-serif;
+    letter-spacing: -0.045em;
+  }}
+  .bar {{ width: 76px; height: 8px; margin: 16px 0 14px; background: #E24A2A; }}
+  .lede {{ margin: 0; max-width: 34rem; font-size: 18px; }}
+  .meta {{ margin: 8px 0 0; color: #3a342c; font-size: 14px; }}
+  .install {{
+    display: flex;
+    width: min(100%, 640px);
+    margin-top: 18px;
+    border: 2px solid #161616;
+  }}
+  code {{
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    background: transparent;
+    font: 13px/1.4 ui-monospace, "SFMono-Regular", monospace;
+    white-space: nowrap;
+  }}
+  button {{
+    flex: none;
+    border: 0;
+    border-left: 2px solid #161616;
+    background: #2A45F5;
+    color: #E6E0D4;
+    padding: 0 16px;
+    font: 700 14px/1 "Noto Sans SC", sans-serif;
+    cursor: pointer;
+  }}
+  button:hover {{ background: #161616; }}
+  .jump {{
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    margin: 0 -24px;
+    padding: 0 12px;
+    background: #E6E0D4;
+    border-bottom: 2px solid #161616;
+  }}
+  .jump a {{
+    flex: none;
+    padding: 12px;
+    color: #161616;
+    text-decoration: none;
+    font-weight: 500;
+  }}
+  .jump a:hover {{ background: #161616; color: #E6E0D4; }}
+  section {{ padding-top: 8px; }}
+  .cat {{
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 36px 0 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #161616;
+  }}
+  .cat span {{
+    color: #2A45F5;
+    font: 700 14px/1 Unbounded, sans-serif;
+  }}
+  h2 {{
+    margin: 0;
+    font: 700 32px/1 Unbounded, "Noto Sans SC", sans-serif;
+    letter-spacing: -0.04em;
+  }}
+  ol {{ list-style: none; margin: 0; padding: 0; }}
+  li {{
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto auto;
+    grid-template-areas: "place who stat go" "place facts stat go";
+    column-gap: 16px;
+    align-items: center;
+    padding: 16px 0 14px;
+    border-bottom: 1px solid rgba(22, 22, 22, 0.16);
+  }}
+  .place {{
+    grid-area: place;
+    font: 700 18px/1 Unbounded, sans-serif;
+  }}
+  li:first-child .place {{ color: #E24A2A; }}
+  .who {{ grid-area: who; min-width: 0; }}
+  .skill {{
+    display: block;
+    overflow: hidden;
+    color: #161616;
+    font-weight: 700;
+    font-size: 18px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }}
+  .skill:hover {{ color: #2A45F5; }}
+  .repo {{
+    display: block;
+    overflow: hidden;
+    color: #3a342c;
+    font-size: 13px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }}
+  .facts {{
+    grid-area: facts;
+    margin: 2px 0 0;
+    color: #3a342c;
+    font-size: 13px;
+  }}
+  .ok {{ color: #161616; }}
+  .bad {{ color: #E24A2A; }}
+  .stat {{ grid-area: stat; text-align: right; }}
+  .stat b {{
+    display: block;
+    font: 700 28px/1 Unbounded, sans-serif;
+    letter-spacing: -0.04em;
+  }}
+  .delta, .stat small {{
+    color: #3a342c;
+    font: 12px/1.2 "Noto Sans SC", sans-serif;
+  }}
+  .stat small {{ display: block; margin-top: 4px; letter-spacing: 0.08em; }}
+  li button {{ grid-area: go; height: 40px; }}
+  .empty, .fail {{ margin: 16px 0; }}
   .fail {{ color: #E24A2A; }}
+  @media (max-width: 720px) {{
+    .place {{ align-self: start; padding-top: 3px; }}
+    .hero {{ grid-template-columns: 1fr; gap: 8px; }}
+    .hero img {{ width: 120px; height: 120px; }}
+    h1 {{ font-size: 64px; }}
+    .install {{ width: 100%; }}
+    li {{
+      grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+      grid-template-areas: "place who go" "place facts facts" "place stat stat";
+      row-gap: 6px;
+    }}
+    .stat {{ text-align: left; }}
+    .stat b {{ display: inline; margin-right: 8px; font-size: 22px; }}
+    .stat small {{ display: inline; }}
+  }}
 </style>
 </head>
 <body>
 <main>
-<header>
+<header class="hero">
   <img src="hana.jpg" alt="Hana">
   <div>
-    <h1>技能测评</h1>
-    <p class="meta">测评时间 {escape(updated)} · 每 6 小时一次 · {escape(BOARD_TITLES)}</p>
-    <p class="meta">同一份正文只保留星数最高的那一处。排名按启动 token 从高到低。<a href="https://github.com/quantz8a/skillock">skillock</a> 不在榜上。</p>
+    <p class="kicker">SKILLOCK</p>
+    <h1>Hana</h1>
+    <div class="bar"></div>
+    <p class="lede">公开技能按启动 token 排名。数字越大，装进去越占上下文。</p>
+    <p class="meta">{escape(updated)} · 每 6 小时重测 · 同一份正文只留星数最高的一份 · <a href="https://github.com/quantz8a/skillock">skillock 不在榜上</a></p>
+    <div class="install"><code>{escape(INSTALL)}</code><button type="button" data-cmd="{command}">安装 Hana</button></div>
   </div>
 </header>
-<p class="install"><code>{escape(INSTALL)}</code><button type="button" data-cmd="{command}">安装 Hana</button></p>
-{tables}
+<nav class="jump">{jumps}</nav>
+{sections}
 {fail_html}
 </main>
 <script>
+function copyText(text) {{
+  if (navigator.clipboard && navigator.clipboard.writeText) {{
+    return navigator.clipboard.writeText(text).catch(function () {{ return fallbackCopy(text); }});
+  }}
+  return fallbackCopy(text);
+}}
+function fallbackCopy(text) {{
+  var area = document.createElement("textarea");
+  area.value = text;
+  area.setAttribute("readonly", "");
+  area.style.position = "fixed";
+  area.style.left = "-9999px";
+  document.body.appendChild(area);
+  area.select();
+  var ok = document.execCommand("copy");
+  area.remove();
+  return ok ? Promise.resolve() : Promise.reject();
+}}
 document.querySelectorAll("[data-cmd]").forEach(function (btn) {{
   btn.addEventListener("click", function () {{
-    navigator.clipboard.writeText(btn.getAttribute("data-cmd")).then(function () {{
-      var old = btn.textContent;
+    var old = btn.textContent;
+    copyText(btn.getAttribute("data-cmd")).then(function () {{
       btn.textContent = "已复制";
       setTimeout(function () {{ btn.textContent = old; }}, 1200);
     }});
