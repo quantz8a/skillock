@@ -10,6 +10,7 @@ from skillock.engine import (
     discover,
     estimate_tokens,
     load_skill,
+    optimize,
     parse_constraint,
     parse_document,
     ranges_overlap,
@@ -65,6 +66,23 @@ class ExamplePackTest(unittest.TestCase):
         self.assertEqual(doc.description, "first line second line")
         self.assertEqual(doc.body, "body")
         self.assertEqual(doc.errors, [])
+
+    def test_optimize_keeps_a_set_that_can_be_installed(self):
+        skills = [load_skill(path) for path in discover([EXAMPLES])]
+        plan = optimize(skills, Options(harness={"opencode": Version.parse("2.0.1")}))
+        reasons = {item.skill.name: item.reason for item in plan.dropped}
+        self.assertEqual(reasons["thorough-writer"], "pin-drift")
+        self.assertEqual(reasons["Bad_Name"], "spec-name")
+        self.assertEqual(reasons["same-name"], "duplicate-name")
+        kept = {skill.name for skill in plan.kept}
+        self.assertIn("terse-writer", kept)
+        self.assertIn("planner", kept)
+        self.assertIn("same-name", kept)
+        self.assertNotIn("thorough-writer", kept)
+        report = analyze(plan.kept, Options(harness={"opencode": Version.parse("2.0.1")}))
+        self.assertFalse(any(item.level == "error" for item in report.findings))
+        self.assertLessEqual(plan.startup_tokens, 4000)
+        self.assertEqual(str(plan.harness["opencode"]), "2.0.1")
 
     def test_token_budget_rounds_up(self):
         self.assertEqual(estimate_tokens("abcd"), 1)

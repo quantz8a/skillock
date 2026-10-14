@@ -1041,3 +1041,222 @@ def _unquote_toml(value):
     if value.startswith('"') and value.endswith('"'):
         value = value[1:-1]
     return value.replace('\\"', '"').replace("\\\\", "\\")
+
+
+class Drop:
+    def __init__(self, skill, reason, detail):
+        self.skill = skill
+        self.reason = reason
+        self.detail = detail
+
+
+class Plan:
+    def __init__(self, kept, dropped, harness, startup_tokens, body_tokens, over_body):
+        self.kept = kept
+        self.dropped = dropped
+        self.harness = harness
+        self.startup_tokens = startup_tokens
+        self.body_tokens = body_tokens
+        self.over_body = over_body
+
+
+def _startup_of(skill):
+    return estimate_tokens(skill.name) + estimate_tokens(skill.description)
+
+
+def _body_of(skill):
+    return estimate_tokens(skill.body)
+
+
+def _merged_pins(skill):
+    collected = []
+    if skill.compatibility:
+        collected.extend(pins_from_text(skill.compatibility))
+    collected.extend(pins_from_metadata(skill.metadata))
+    by_product = {}
+    for pin in collected:
+        if "unsatisfiable" in pin.raw:
+            return None
+        prev = by_product.get(pin.product)
+        if prev is None:
+            by_product[pin.product] = pin
+            continue
+        merged = intersect(prev.range, pin.range)
+        if merged is None:
+            return None
+        by_product[pin.product] = Pin(pin.product, merged, f"{prev.raw}, {pin.raw}")
+    return by_product
+
+
+def _fits_harness(pinmap, harness):
+    if pinmap is None:
+        return False
+    for product, version in harness.items():
+        pin = pinmap.get(product)
+        if pin is not None and not satisfies(version, pin.range):
+            return False
+    return True
+
+
+def _intersection(pinmaps):
+    acc = {}
+    for pinmap in pinmaps:
+        for product, pin in pinmap.items():
+            current = acc.get(product)
+            if current is None:
+                acc[product] = pin.range
+                continue
+            merged = intersect(current, pin.range)
+            if merged is None:
+                return None
+            acc[product] = merged
+    return acc
+
+
+def _conflict_count(index, pinmaps):
+    count = 0
+    mine = pinmaps[index]
+    for product, pin in mine.items():
+        for other_index, other in enumerate(pinmaps):
+            if other_index == index:
+                continue
+            theirs = other.get(product)
+            if theirs is not None and not ranges_overlap(pin.range, theirs.range):
+                count += 1
+    return count
+
+
+def _just_under(version):
+    parts = list(version.parts) or [0]
+    if parts[-1] > 0:
+        parts[-1] -= 1
+        return Version(tuple(parts))
+    if len(parts) == 1 and parts[0] > 0:
+        return Version((parts[0] - 1,))
+    return Version((0,))
+
+
+def _concrete(span, installed):
+    if installed is not None and satisfies(installed, span):
+        return installed
+    if span.max is None or span.min.cmp(span.max) < 0:
+        if span.max is not None and span.min.cmp(_zero()) == 0:
+            under = _just_under(span.max)
+            if satisfies(under, span):
+                return under
+        return span.min
+    return None
+
+
+def _spec_reason(skill):
+    if not skill.name or not _valid_name(skill.name):
+        return "spec-name", f"name `{skill.name}` is not a valid skill name"
+    if skill.path.parent.name != skill.name:
+        return "spec-dir", f"name `{skill.name}` does not match parent directory `{skill.path.parent.name}`"
+    return None
+
+
+def optimize(skills, options):
+    dropped = []
+    kept = []
+    for skill in skills:
+        reason = _spec_reason(skill)
+        if reason is not None:
+            dropped.append(Drop(skill, reason[0], reason[1]))
+            continue
+        pinmap = _merged_pins(skill)
+        if pinmap is None:
+            dropped.append(Drop(skill, "pin-unsatisfiable", "pins inside this skill cannot all hold"))
+            continue
+        if options.harness and not _fits_harness(pinmap, options.harness):
+            outside = []
+            for product, version in sorted(options.harness.items()):
+                pin = pinmap.get(product)
+                if pin is not None and not satisfies(version, pin.range):
+                    outside.append(f"installed {product} {version} is outside {pin.raw}")
+            dropped.append(Drop(skill, "pin-drift", "; ".join(outside)))
+            continue
+        kept.append(skill)
+
+    while len(kept) > 1:
+        pinmaps = [_merged_pins(skill) for skill in kept]
+        if _intersection(pinmaps) is not None:
+            break
+        ranked = sorted(
+            range(len(kept)),
+            key=lambda index: (-_conflict_count(index, pinmaps), str(kept[index].path)),
+        )
+        index = ranked[0]
+        skill = kept.pop(index)
+        dropped.append(Drop(skill, "pin-conflict", "removed so the remaining harness pins can overlap"))
+
+    by_name = {}
+    for skill in kept:
+        by_name.setdefault(skill.name, []).append(skill)
+    kept = []
+    for name, group in by_name.items():
+        group.sort(key=lambda skill: str(skill.path))
+        kept.append(group[0])
+        for extra in group[1:]:
+            dropped.append(
+                Drop(extra, "duplicate-name", f"kept {group[0].path} for name `{name}`")
+            )
+
+    while len(kept) > 1 and sum(_startup_of(skill) for skill in kept) > options.startup_budget:
+        kept.sort(key=lambda skill: (-_startup_of(skill), str(skill.path)))
+        skill = kept.pop(0)
+        dropped.append(
+            Drop(
+                skill,
+                "startup-budget",
+                f"startup {_startup_of(skill)} tokens, removed to fit {options.startup_budget}",
+            )
+        )
+
+    kept.sort(key=lambda skill: str(skill.path))
+    pinmaps = [_merged_pins(skill) for skill in kept]
+    resolved = _intersection(pinmaps) or {}
+    chosen = {}
+    for product, span in sorted(resolved.items()):
+        installed = options.harness.get(product)
+        version = _concrete(span, installed)
+        if version is not None:
+            chosen[product] = version
+    startup = sum(_startup_of(skill) for skill in kept)
+    body = sum(_body_of(skill) for skill in kept)
+    over_body = [skill for skill in kept if _body_of(skill) > options.body_budget]
+    over_body.sort(key=lambda skill: (-_body_of(skill), str(skill.path)))
+    dropped.sort(key=lambda item: (item.reason, str(item.skill.path)))
+    return Plan(kept, dropped, chosen, startup, body, over_body)
+
+
+def plan_report(plan):
+    summaries = []
+    for skill in plan.kept:
+        summaries.append(
+            Summary(skill.name, skill.path, skill.sha256, _startup_of(skill), _body_of(skill))
+        )
+    return Report(summaries, [], plan.startup_tokens, plan.body_tokens)
+
+
+def render_plan(plan):
+    lines = [
+        f"optimize · keep {len(plan.kept)} · drop {len(plan.dropped)} · startup {plan.startup_tokens} tokens · bodies {plan.body_tokens} tokens\n"
+    ]
+    if plan.harness:
+        lines.append("\nharness\n")
+        for product, version in plan.harness.items():
+            lines.append(f"  {product} {version}\n")
+    if plan.dropped:
+        lines.append("\ndrop\n")
+        for item in plan.dropped:
+            lines.append(f"  {item.reason}  {_label(item.skill)}  {item.detail}\n")
+    if plan.kept:
+        lines.append("\nkeep\n")
+        for skill in plan.kept:
+            lines.append(f"  {_startup_of(skill):6}  {_label(skill)}  {_display(skill.path)}\n")
+    if plan.over_body:
+        lines.append("\nstill over the body budget\n")
+        for skill in plan.over_body:
+            lines.append(f"  {_body_of(skill):6}  {_label(skill)}\n")
+    return "".join(lines)

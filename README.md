@@ -27,7 +27,7 @@ From a checkout, without installing:
 PYTHONPATH=python python3 -m skillock check examples --harness opencode=2.0.1
 ```
 
-The Rust crate in this repository is the same checker. Packaged binaries for each platform come later; this build does not need them.
+The Rust crate in this repository is the same checker. Apple silicon builds are on the [v0.1.0 release](https://github.com/quantz8a/skillock/releases/tag/v0.1.0). `optimize` is in the Python build.
 
 That example pack is the failure mode already written down in public issue trackers: a skill that makes the agent slow, two skills that pin different OpenCode majors, and a pin the installed version has drifted past.
 
@@ -67,6 +67,14 @@ skillock lock examples --harness opencode=2.0.1
 
 With no paths, skillock scans `./skills`, `./examples`, and the `.agents`, `.claude`, and `.codex` skill directories in the current project. `--user` adds the same directories under `$HOME`. Pass a directory to scan anywhere else, including a local Codex++ install.
 
+## Optimize
+
+```
+PYTHONPATH=python python3 -m skillock optimize examples --harness opencode=2.0.1
+```
+
+On that example pack the plan is `keep 3 · drop 3 · startup 84 tokens`. It drops the invalid name, the duplicate, and the skill whose OpenCode pin excludes `2.0.1`. `planner` stays, and the report still says its body is over the activation budget. skillock does not edit or delete `SKILL.md` files. `--lock` writes the kept set to `SKILLOCK.toml`.
+
 ## 测评
 
 <!-- leaderboard:start -->
@@ -96,7 +104,21 @@ With no paths, skillock scans `./skills`, `./examples`, and the `.agents`, `.cla
 
 skillock 扫一组 `SKILL.md`，回答三件事：启动时 name 和 description 占多少 token，哪些技能会一起触发并且指令相反，哪些 harness 版本钉不能同时成立。示例目录的第一行就是上面那个数。它不安装技能，也不替代任何一个 coding agent。
 
-先用 Python 版。`pip install ./python` 之后命令还是 `skillock`，macOS、Linux、Windows 同一套。Apple 芯片的二进制在 [v0.1.0](https://github.com/quantz8a/skillock/releases/tag/v0.1.0)。
+先用 Python 版。`pip install ./python` 之后命令还是 `skillock`，macOS、Linux、Windows 同一套。不安装时：
+
+```
+PYTHONPATH=python python3 -m skillock check examples --harness opencode=2.0.1
+```
+
+Apple 芯片的二进制在 [v0.1.0](https://github.com/quantz8a/skillock/releases/tag/v0.1.0)。`optimize` 目前只在 Python 版里。
+
+检查分两类。错误：`spec-name`、`spec-dir`、`spec-description`、`spec-frontmatter` 是清单不合规范；`duplicate-name` 是重名；`pin-conflict` 是两个技能把同一个 harness 钉在互不相交的版本上；`pin-drift` 是 `--harness` 给出的已装版本落在钉的外面。警告：`overlap` 是两条描述会抢同一次请求；`contradiction` 是一边 always/must、另一边 never/do not；`body-budget` 和 `startup-budget` 是正文或启动 token 超预算；`lock-drift`、`lock-new`、`lock-removed` 是目录和 `SKILLOCK.toml` 不一致。
+
+版本钉读 `compatibility`，也读以产品名命名的 metadata，例如 `skillock.opencode = ">=2,<3"`。没写比较符的版本只匹配这个前缀，更后面的组件算漂移。token 是预算：4 个 ASCII 字符算 1 个，每个非 ASCII 字符算 1 个，不是模型分词器。启动数更要紧，因为每个 `name` 和 `description` 都会先被加载。
+
+`skillock lock` 把留下的路径和 SHA-256 写进 `SKILLOCK.toml`。有错误时退出码是 1，`--strict` 连警告也算失败。不给路径时扫 `./skills`、`./examples`，以及项目里的 `.agents`、`.claude`、`.codex` 技能目录。`--user` 再加 `$HOME` 下的同名目录。
+
+`skillock optimize` 自动收成一组能一起装的技能。它会拿掉不合规范的清单、重名里多出来的那份、已装版本对不上的钉；钉还是互斥时，拿掉和别人冲突最多的那一个。启动 token 仍超过 `--budget`（默认 4000）时，从 name 和 description 最大的开始拿掉。正文超预算只报告，不改写技能。它不编辑、不删除 `SKILL.md`。`--lock` 把留下的那一组写成锁文件。示例目录加上 `--harness opencode=2.0.1` 的结果是留下 3 个、拿掉 3 个、启动 84 token。`planner` 还在，正文仍然超过激活预算。
 
 ## What this is not
 

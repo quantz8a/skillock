@@ -14,8 +14,11 @@ from skillock.engine import (
     discover,
     load_skill,
     local_roots,
+    optimize,
+    plan_report,
     read_lock,
     render,
+    render_plan,
     to_json,
     user_roots,
     write_lock,
@@ -27,7 +30,7 @@ def main(argv=None):
     if any(arg in ("-h", "--help", "help") for arg in args):
         print(_HELP)
         return 0
-    if args and args[0] in ("check", "lock"):
+    if args and args[0] in ("check", "lock", "optimize"):
         command, rest = args[0], args[1:]
     else:
         command, rest = "check", args
@@ -40,6 +43,9 @@ def main(argv=None):
         return 2
     if command == "lock":
         cli["write"] = True
+    if command == "optimize":
+        cli["read_existing"] = False
+        return _optimize(cwd, cli)
     return _run(cwd, cli)
 
 
@@ -109,7 +115,7 @@ def _harness(value):
     return found
 
 
-def _run(cwd, cli):
+def _collect(cwd, cli):
     if cli["paths"]:
         roots = cli["paths"]
     else:
@@ -119,7 +125,61 @@ def _run(cwd, cli):
         if not roots:
             roots.append(cwd)
     files = discover(roots)
-    skills = [load_skill(path) for path in files]
+    return [load_skill(path) for path in files]
+
+
+def _optimize(cwd, cli):
+    skills = _collect(cwd, cli)
+    if not skills:
+        print("0 skills · no SKILL.md under the scanned paths")
+        return 0
+    plan = optimize(skills, cli["options"])
+    if cli["json"]:
+        import json
+
+        sys.stdout.write(
+            json.dumps(
+                {
+                    "startup_tokens": plan.startup_tokens,
+                    "body_tokens": plan.body_tokens,
+                    "harness": {name: str(version) for name, version in plan.harness.items()},
+                    "keep": [_display_skill(skill) for skill in plan.kept],
+                    "drop": [
+                        {"reason": item.reason, "skill": item.skill.name, "detail": item.detail}
+                        for item in plan.dropped
+                    ],
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+            + "\n"
+        )
+    else:
+        sys.stdout.write(render_plan(plan))
+    if cli["write"]:
+        try:
+            write_lock(cli["lockfile"], cwd, plan_report(plan))
+        except OSError as err:
+            print(f"skillock: could not write {cli['lockfile']}: {err}", file=sys.stderr)
+            return 2
+        if not cli["json"]:
+            print(f"wrote {cli['lockfile']}", file=sys.stderr)
+    if not plan.kept:
+        return 1
+    report = analyze(plan.kept, cli["options"])
+    errors = any(item.level == "error" for item in report.findings)
+    warnings = any(item.level == "warning" for item in report.findings)
+    if errors or (cli["strict"] and warnings):
+        return 1
+    return 0
+
+
+def _display_skill(skill):
+    return {"name": skill.name, "path": str(skill.path).replace("\\", "/")}
+
+
+def _run(cwd, cli):
+    skills = _collect(cwd, cli)
     report = analyze(skills, cli["options"])
     if cli["read_existing"] and cli["lockfile"].is_file():
         try:
@@ -155,6 +215,14 @@ skillock — lockfile for agent skills
 Usage:
   skillock check [options] [paths...]
   skillock lock  [options] [paths...]
+  skillock optimize [options] [paths...]
+
+optimize keeps a set that can be installed together. It drops an invalid
+manifest, a duplicate name, a harness pin the installed version misses,
+and, when pins still disagree, the skill that conflicts with the most
+others. If startup tokens are still over --budget, it drops the largest
+names and descriptions. It does not edit or delete SKILL.md files.
+--lock writes that kept set to SKILLOCK.toml.
 
 With no paths, skillock scans ./skills, ./examples, and the
 .agents, .claude, and .codex skill directories in the
