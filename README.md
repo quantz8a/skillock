@@ -70,51 +70,24 @@ With no paths, skillock scans `./skills`, `./examples`, and the `.agents`, `.cla
 ## 测评
 
 <!-- leaderboard:start -->
-Hana 把每个公开仓库当成一组已经装上的技能，跑 skillock 的检查。启动 token 是还没选中任何一个技能之前就要付的成本，高的排在前面。每 6 小时重测一次。skillock 自己不进榜。完整页面：[Hana 测评](https://quantz8a.github.io/skillock/)。
+这一期只测界面设计。候选来自星数较高的仓库里、目录名是 `frontend-design`、`ui-ux`、`taste`、`impeccable`、`design-system`、`web-design` 的 `SKILL.md`。同一份正文只保留星数最高的那一处。排名按启动 token 从高到低，每 6 小时重测一次。skillock 自己不进榜。完整页面：[Hana 测评](https://quantz8a.github.io/skillock/)。
 
-最近一次测评：2026-10-14 15:00 UTC。
+最近一次测评：2026-10-14 15:13 UTC。
 
-### 省 token
+### 界面设计
 
-| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
-| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | 28 | 1,507 | 24,014 | 6 | 6 | — | duplicate-name 6, overlap 6 |
-| 2 | [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | 12 | 688 | 25,813 | 5 | 1 | — | spec-name 5, overlap 1 |
-| 3 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | 12 | 669 | 10,154 | 6 | 2 | — | duplicate-name 6, overlap 2 |
-
-### 记忆
-
-| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
-| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 37 | 2,503 | 70,501 | 24 | 19 | — | overlap 12, spec-name 8, spec-dir 7, body-budget 7 |
-
-### 设计
-
-| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
-| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 22 | 4,600 | 57,928 | 1 | 172 | — | overlap 171, duplicate-name 1, startup-budget 1 |
-| 2 | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 14 | 1,527 | 90,128 | 11 | 7 | — | spec-dir 11, body-budget 7 |
-| 3 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 13 | 1,326 | 26,720 | 6 | 6 | — | duplicate-name 6, overlap 6 |
-
-### 规划
-
-| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
-| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [garrytan/gstack](https://github.com/garrytan/gstack) | 65 | 1,680 | 686,275 | 1 | 48 | — | body-budget 46, overlap 2, duplicate-name 1 |
-| 2 | [tt-a1i/archify](https://github.com/tt-a1i/archify) | 5 | 561 | 10,797 | 0 | 0 | — | 通过 |
-| 3 | [github/spec-kit](https://github.com/github/spec-kit) | 2 | 171 | 2,005 | 0 | 0 | — | 通过 |
-
-### 综合
-
-| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
-| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 200+ | 14,970 | 456,631 | 46 | 37 | — | duplicate-name 46, overlap 24, body-budget 10, spec-metadata 2 |
-| 2 | [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | 200+ | 6,714 | 162,041 | 26 | 16837 | — | overlap 16836, spec-name 15, spec-dir 11, startup-budget 1 |
-| 3 | [anthropics/skills](https://github.com/anthropics/skills) | 20 | 2,592 | 73,871 | 2 | 4 | — | body-budget 4, spec-description 1, spec-dir 1 |
-| 4 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | 25 | 2,479 | 88,922 | 0 | 2 | — | body-budget 2 |
-| 5 | [mattpocock/skills](https://github.com/mattpocock/skills) | 38 | 1,597 | 42,766 | 0 | 1 | — | spec-metadata 1 |
-| 6 | [obra/superpowers](https://github.com/obra/superpowers) | 15 | 709 | 42,498 | 0 | 3 | — | body-budget 3 |
-| 7 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | 1 | 63 | 601 | 0 | 0 | — | 通过 |
+| # | 技能 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
+| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | [impeccable](https://github.com/pbakaus/impeccable/blob/main/.opencode/skills/impeccable/SKILL.md) | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 81,070 | 241 | 3,052 | 0 | 0 | 0 | 通过 |
+| 2 | [imagegen-frontend-web](https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-web/SKILL.md) | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 96,072 | 181 | 9,858 | 0 | 1 | — | body-budget 1 |
+| 3 | [imagegen-frontend-mobile](https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-mobile/SKILL.md) | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 96,072 | 178 | 10,796 | 0 | 1 | — | body-budget 1 |
+| 4 | [design](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/design/SKILL.md) | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 135,743 | 174 | 3,606 | 0 | 0 | 0 | 通过 |
+| 5 | [image-to-code](https://github.com/Leonxlnx/taste-skill/blob/main/skills/image-to-code-skill/SKILL.md) | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 96,072 | 155 | 9,763 | 1 | 1 | — | spec-dir 1, body-budget 1 |
+| 6 | [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-ux-pro-max/SKILL.md) | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 135,743 | 136 | 4,146 | 0 | 0 | 0 | 通过 |
+| 7 | [taste](https://github.com/affaan-m/ECC/blob/main/skills/taste/SKILL.md) | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 279,060 | 131 | 4,060 | 0 | 0 | — | 通过 |
+| 8 | [ui-styling](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-styling/SKILL.md) | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 135,743 | 130 | 2,671 | 0 | 0 | — | 通过 |
+| 9 | [design-system](https://github.com/affaan-m/ECC/blob/main/pi/core/skills/design-system/SKILL.md) | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 279,060 | 118 | 621 | 0 | 0 | — | 通过 |
+| 10 | [frontend-design](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) | [anthropics/skills](https://github.com/anthropics/skills) | 181,080 | 58 | 2,440 | 0 | 0 | 0 | 通过 |
 <!-- leaderboard:end -->
 
 ## 中文

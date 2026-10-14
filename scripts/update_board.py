@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Evaluate public skill repos with skillock and rewrite the Pages site plus the README."""
 
+import hashlib
 import json
 import os
 import shutil
@@ -32,7 +33,32 @@ MAX_POINTS = 120
 MAX_SKILLS = 200
 PAGE = "https://quantz8a.github.io/skillock/"
 SELF_REPO = "quantz8a/skillock"
-TYPE_ORDER = ("省 token", "记忆", "设计", "规划", "综合")
+CATEGORY = "界面设计"
+DESIGN_DIRS = {
+    "frontend-design",
+    "ui-ux",
+    "ui-ux-pro-max",
+    "taste",
+    "impeccable",
+    "design-system",
+    "web-design",
+    "design",
+}
+SEEDS = (
+    "nextlevelbuilder/ui-ux-pro-max-skill",
+    "Leonxlnx/taste-skill",
+    "pbakaus/impeccable",
+    "anthropics/skills",
+    "affaan-m/ECC",
+)
+PURE = {
+    "nextlevelbuilder/ui-ux-pro-max-skill",
+    "Leonxlnx/taste-skill",
+    "pbakaus/impeccable",
+}
+MIN_STARS = 5000
+MAX_ROWS = 12
+MAX_PER_REPO = 3
 
 
 def token():
@@ -73,6 +99,7 @@ def fetch_repo(repo, auth):
         "pushed": (data.get("pushed_at") or "")[:10],
         "url": data.get("html_url") or f"https://github.com/{repo}",
         "branch": data.get("default_branch") or "main",
+        "fork": bool(data.get("fork")),
     }
 
 
@@ -193,71 +220,122 @@ def delta_text(delta):
     return f"{delta:,}"
 
 
+def is_design_skill(path):
+    parts = path.split("/")
+    if not parts or parts[-1] != "SKILL.md" or ".cursor" in parts:
+        return False
+    parent = parts[-2] if len(parts) > 1 else ""
+    return parent in DESIGN_DIRS or parent.startswith("ui-ux")
+
+
+def search_repos(auth):
+    query = urllib.parse.quote("frontend-design OR ui-ux-pro-max OR taste-skill OR impeccable")
+    url = f"https://api.github.com/search/repositories?q={query}&sort=stars&per_page=15"
+    try:
+        data = github_json(url, auth)
+    except urllib.error.URLError as err:
+        print(f"repo search failed: {err}")
+        return []
+    found = []
+    for item in data.get("items") or []:
+        name = item.get("full_name") or ""
+        if name and name.lower() != SELF_REPO and not item.get("fork"):
+            found.append(name)
+    return found
+
+
+def design_paths(repo, meta, auth):
+    ref = urllib.parse.quote(meta["branch"], safe="")
+    tree = github_json(f"https://api.github.com/repos/{repo}/git/trees/{ref}?recursive=1", auth)
+    paths = []
+    for path in skill_paths(tree):
+        if path.startswith("docs/") or "/docs/" in f"/{path}":
+            continue
+        if repo in PURE or is_design_skill(path):
+            paths.append(path)
+    return paths[:12]
+
+
+def evaluate_file(path):
+    skill = load_skill(path)
+    report = analyze([skill], Options())
+    errors = sum(item.level == "error" for item in report.findings)
+    warnings = sum(item.level == "warning" for item in report.findings)
+    name = skill.name or path.parent.name
+    return {
+        "name": name,
+        "startup_tokens": report.startup_tokens,
+        "body_tokens": report.body_tokens,
+        "errors": errors,
+        "warnings": warnings,
+        "codes": code_summary(report.findings),
+    }
+
+
+def _prefer_skill(row, current):
+    def score(item):
+        path = item["path"]
+        primary = 0 if path.startswith("skills/") or "/skills/" in f"/{path}" else 1
+        return (primary, -item["body_tokens"], path)
+
+    return score(row) < score(current)
+
+
 def ranked(rows):
-    rows = [row for row in rows if "startup_tokens" in row]
-    rows.sort(key=lambda row: (-row["startup_tokens"], -row["errors"], row["repo"]))
+    rows.sort(key=lambda row: (-row["startup_tokens"], -row["errors"], -row["body_tokens"], row["name"]))
     return rows
 
 
 def markdown_table(rows):
     lines = [
-        "| # | 仓库 | 技能 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |",
-        "| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| # | 技能 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |",
+        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for i, row in enumerate(rows, start=1):
-        count = fmt(row["skills"])
-        if row.get("truncated"):
-            count += "+"
         lines.append(
-            f"| {i} | [{row['repo']}]({row['url']}) | {count} | {fmt(row['startup_tokens'])} | {fmt(row['body_tokens'])} | {row['errors']} | {row['warnings']} | {delta_text(row['delta'])} | {row['codes']} |"
+            f"| {i} | [{row['name']}]({row['file_url']}) | [{row['repo']}]({row['url']}) | {fmt(row['stars'])} | {fmt(row['startup_tokens'])} | {fmt(row['body_tokens'])} | {row['errors']} | {row['warnings']} | {delta_text(row['delta'])} | {row['codes']} |"
         )
     return "\n".join(lines)
 
 
-def readme_block(groups, updated):
+def readme_block(rows, updated):
     parts = [
-        "Hana 把每个公开仓库当成一组已经装上的技能，跑 skillock 的检查。启动 token 是还没选中任何一个技能之前就要付的成本，高的排在前面。每 6 小时重测一次。skillock 自己不进榜。完整页面：[Hana 测评]("
+        "这一期只测界面设计。候选来自星数较高的仓库里、目录名是 `frontend-design`、`ui-ux`、`taste`、`impeccable`、`design-system`、`web-design` 的 `SKILL.md`。同一份正文只保留星数最高的那一处。排名按启动 token 从高到低，每 6 小时重测一次。skillock 自己不进榜。完整页面：[Hana 测评]("
         + PAGE
         + ")。",
         "",
         f"最近一次测评：{updated}。",
         "",
+        "### 界面设计",
+        "",
+        markdown_table(rows) if rows else "这一期没有测到界面设计技能。",
+        "",
     ]
-    for title, rows in groups:
-        parts.append(f"### {title}")
-        parts.append("")
-        if rows:
-            parts.append(markdown_table(rows))
-        else:
-            parts.append("这一类这次没有测到。")
-        parts.append("")
     return "\n".join(parts).rstrip() + "\n"
 
 
-def html_page(groups, failed, updated):
-    sections = []
-    for title, rows in groups:
-        body = []
-        for i, row in enumerate(rows, start=1):
-            count = fmt(row["skills"]) + ("+" if row.get("truncated") else "")
-            body.append(
-                "<tr>"
-                f"<td>{i}</td>"
-                f"<td><a href=\"{escape(row['url'])}\">{escape(row['repo'])}</a></td>"
-                f"<td class=\"num\">{count}</td>"
-                f"<td class=\"num\">{fmt(row['startup_tokens'])}</td>"
-                f"<td class=\"num\">{fmt(row['body_tokens'])}</td>"
-                f"<td class=\"num\">{row['errors']}</td>"
-                f"<td class=\"num\">{row['warnings']}</td>"
-                f"<td class=\"num\">{escape(delta_text(row['delta']))}</td>"
-                f"<td>{escape(row['codes'])}</td>"
-                "</tr>"
-            )
-        sections.append(
-            f"<h2>{escape(title)}</h2>"
-            "<table><thead><tr><th>#</th><th>仓库</th><th>技能</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead>"
-            f"<tbody>{''.join(body) or '<tr><td colspan=\"9\">这一类这次没有测到。</td></tr>'}</tbody></table>"
+def html_page(rows, failed, updated):
+    body = []
+    for i, row in enumerate(rows, start=1):
+        body.append(
+            "<tr>"
+            f"<td>{i}</td>"
+            f"<td><a href=\"{escape(row['file_url'])}\">{escape(row['name'])}</a></td>"
+            f"<td><a href=\"{escape(row['url'])}\">{escape(row['repo'])}</a></td>"
+            f"<td class=\"num\">{fmt(row['stars'])}</td>"
+            f"<td class=\"num\">{fmt(row['startup_tokens'])}</td>"
+            f"<td class=\"num\">{fmt(row['body_tokens'])}</td>"
+            f"<td class=\"num\">{row['errors']}</td>"
+            f"<td class=\"num\">{row['warnings']}</td>"
+            f"<td class=\"num\">{escape(delta_text(row['delta']))}</td>"
+            f"<td>{escape(row['codes'])}</td>"
+            "</tr>"
         )
+    table = (
+        "<h2>界面设计</h2>"
+        "<table><thead><tr><th>#</th><th>技能</th><th>仓库</th><th>星</th><th>启动 token</th><th>正文 token</th><th>错误</th><th>警告</th><th>较上次</th><th>检查</th></tr></thead>"
+        f"<tbody>{''.join(body) or '<tr><td colspan=\"10\">这一期没有测到。</td></tr>'}</tbody></table>"
+    )
     fail_html = ""
     if failed:
         fail_html = "<p class=\"fail\">没测到：" + escape(", ".join(failed)) + "</p>"
@@ -266,7 +344,7 @@ def html_page(groups, failed, updated):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hana · 技能测评</title>
+<title>Hana · 界面设计测评</title>
 <style>
   :root {{ color-scheme: light; }}
   body {{ margin: 0; background: #E6E0D4; color: #161616; font: 16px/1.45 "Iowan Old Style", Palatino, "Songti SC", serif; }}
@@ -290,12 +368,12 @@ def html_page(groups, failed, updated):
 <header>
   <img src="hana.jpg" alt="Hana">
   <div>
-    <h1>技能测评</h1>
-    <p class="meta">测评时间 {escape(updated)} · 每 6 小时一次 · skillock 检查启动 token、正文 token、规范错误和冲突指令</p>
-    <p class="meta"><a href="https://github.com/quantz8a/skillock">skillock</a> 不在这张榜上。每一类按启动 token 从高到低排列。</p>
+    <h1>界面设计</h1>
+    <p class="meta">测评时间 {escape(updated)} · 每 6 小时一次 · 只测这一类技能</p>
+    <p class="meta">同一份正文只保留星数最高的那一处。排名按启动 token 从高到低。<a href="https://github.com/quantz8a/skillock">skillock</a> 不在榜上。</p>
   </div>
 </header>
-{''.join(sections)}
+{table}
 {fail_html}
 </main>
 </body>
@@ -312,84 +390,120 @@ def replace_readme(block):
     README.write_text(pre + START + "\n" + block + END + post)
 
 
-def previous_startup(history, repo):
+def previous_startup(history, key):
     points = history.get("points") or []
     if not points or "startup" not in points[-1]:
         return None
-    return points[-1]["startup"].get(repo)
+    return points[-1]["startup"].get(key)
+
+
+def candidate_repos(auth):
+    names = list(SEEDS)
+    for name in search_repos(auth):
+        if name not in names:
+            names.append(name)
+    return names
 
 
 def main():
-    catalog = [item for item in json.loads(CATALOG.read_text()) if item["repo"].lower() != SELF_REPO]
     auth = token()
     now = datetime.now(timezone.utc).replace(microsecond=0)
     history = load_json(HISTORY, {"points": []})
     rows = []
     failed = []
-    with tempfile.TemporaryDirectory(prefix="skillock-board-") as tmp:
+    seen_hash = {}
+    with tempfile.TemporaryDirectory(prefix="skillock-design-") as tmp:
         root = Path(tmp)
-        for item in catalog:
-            repo = item["repo"]
-            print(f"evaluate {repo}", flush=True)
+        for repo in candidate_repos(auth):
+            print(f"scan {repo}", flush=True)
             meta = fetch_repo(repo, auth)
             if "error" in meta:
                 failed.append(f"{repo} ({meta['error']})")
                 continue
+            if meta.get("fork"):
+                continue
+            seeded = repo in SEEDS
+            if meta["stars"] < MIN_STARS and not seeded:
+                continue
             try:
-                measured, _truncated = evaluate(repo, meta, auth, root / repo.replace("/", "__"))
+                paths = design_paths(repo, meta, auth)
             except urllib.error.HTTPError as err:
                 failed.append(f"{repo} (HTTP {err.code})")
                 continue
             except urllib.error.URLError as err:
                 failed.append(f"{repo} ({err.reason})")
                 continue
-            if measured is None:
-                failed.append(f"{repo} (no SKILL.md)")
-                continue
-            prev = previous_startup(history, repo)
+            for path in paths:
+                try:
+                    raw = download(repo, meta["branch"], path, auth)
+                except urllib.error.URLError:
+                    failed.append(f"{repo} {path}")
+                    continue
+                digest = hashlib.sha256(raw).hexdigest()
+                current = seen_hash.get(digest)
+                if current is not None and current["stars"] >= meta["stars"]:
+                    continue
+                seen_hash[digest] = {"repo": repo, "path": path, "stars": meta["stars"], "raw": raw, "meta": meta}
+
+        chosen = sorted(seen_hash.values(), key=lambda item: (-item["stars"], item["repo"], item["path"]))
+        for item in chosen:
+            repo = item["repo"]
+            relative = item["path"]
+            target = root / repo.replace("/", "__") / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(item["raw"])
+            measured = evaluate_file(target)
+            key = f"{repo}/{measured['name']}"
+            prev = previous_startup(history, key)
+            branch = item["meta"]["branch"]
+            file_url = f"https://github.com/{repo}/blob/{branch}/{item['path']}"
             measured.update(
                 {
                     "repo": repo,
-                    "type": item.get("type") or "综合",
-                    "url": meta["url"],
-                    "pushed": meta["pushed"],
+                    "stars": item["stars"],
+                    "url": item["meta"]["url"],
+                    "file_url": file_url,
+                    "path": item["path"],
                     "delta": None if prev is None else measured["startup_tokens"] - prev,
+                    "key": key,
                 }
             )
             rows.append(measured)
 
+    collapsed = {}
+    for row in rows:
+        key = (row["repo"], row["name"])
+        current = collapsed.get(key)
+        if current is None or _prefer_skill(row, current):
+            collapsed[key] = row
+    rows = []
+    counts = Counter()
+    for row in ranked(list(collapsed.values())):
+        if counts[row["repo"]] >= MAX_PER_REPO:
+            continue
+        rows.append(row)
+        counts[row["repo"]] += 1
+        if len(rows) >= MAX_ROWS:
+            break
     history["points"].append(
-        {
-            "t": now.isoformat(),
-            "startup": {row["repo"]: row["startup_tokens"] for row in rows},
-        }
+        {"t": now.isoformat(), "startup": {row["key"]: row["startup_tokens"] for row in rows}}
     )
     history["points"] = history["points"][-MAX_POINTS:]
     HISTORY.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n")
 
-    order = [title for title in TYPE_ORDER if any(row["type"] == title for row in rows)]
-    for row in rows:
-        if row["type"] not in order:
-            order.append(row["type"])
-    groups = [(title, ranked([row for row in rows if row["type"] == title])) for title in order]
     updated = now.strftime("%Y-%m-%d %H:%M UTC")
-    board = {
-        "updated": now.isoformat(),
-        "groups": {title: group for title, group in groups},
-        "failed": failed,
-    }
+    board = {"updated": now.isoformat(), "category": CATEGORY, "rows": rows, "failed": failed}
     BOARD.write_text(json.dumps(board, ensure_ascii=False, indent=2) + "\n")
-
     DOCS.mkdir(exist_ok=True)
     logo = ROOT / "assets" / "hana.jpg"
     if logo.exists():
         shutil.copyfile(logo, DOCS / "hana.jpg")
-    (DOCS / "index.html").write_text(html_page(groups, failed, updated))
+    (DOCS / "index.html").write_text(html_page(rows, failed, updated))
     (DOCS / ".nojekyll").write_text("")
-    replace_readme(readme_block(groups, updated))
-    print(f"evaluated {len(rows)} repos, failed {len(failed)}")
+    replace_readme(readme_block(rows, updated))
+    print(f"ranked {len(rows)} design skills, failed {len(failed)}")
     if failed:
-        print("failed: " + "; ".join(failed))
+        print("failed: " + "; ".join(failed[:12]))
 
 
 if __name__ == "__main__":

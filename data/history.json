@@ -60,6 +60,21 @@
         "addyosmani/agent-skills": 2479,
         "ComposioHQ/awesome-claude-skills": 6714
       }
+    },
+    {
+      "t": "2026-10-14T15:13:32+00:00",
+      "startup": {
+        "pbakaus/impeccable/impeccable": 241,
+        "Leonxlnx/taste-skill/imagegen-frontend-web": 181,
+        "Leonxlnx/taste-skill/imagegen-frontend-mobile": 178,
+        "nextlevelbuilder/ui-ux-pro-max-skill/design": 174,
+        "Leonxlnx/taste-skill/image-to-code": 155,
+        "nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max": 136,
+        "affaan-m/ECC/taste": 131,
+        "nextlevelbuilder/ui-ux-pro-max-skill/ui-styling": 130,
+        "affaan-m/ECC/design-system": 118,
+        "anthropics/skills/frontend-design": 58
+      }
     }
   ]
 }
