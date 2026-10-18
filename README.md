@@ -86,86 +86,86 @@ On that example pack the plan is `keep 3 · drop 3 · startup 84 tokens`. It dro
 <!-- leaderboard:start -->
 测这些分类：界面设计、省 token、记忆、规划、审查、测试、调试、研究、文档、安全。同一份正文只保留星数最高的那一处。排名按启动 token 从高到低，每 6 小时重测一次。安装列是一条命令。skillock 自己不进榜。完整页面：[Hana 测评](https://quantz8a.github.io/skillock/)。
 
-最近一次测评：2026-10-18 11:00 UTC。
+最近一次测评：2026-10-18 15:49 UTC。
 
 ### 界面设计
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [imagegen-frontend-web](https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-web/SKILL.md) | `npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-web -g -y` | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 98,633 | 181 | 9,858 | 0 | 1 | 0 | body-budget 1 |
-| 2 | [imagegen-frontend-mobile](https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-mobile/SKILL.md) | `npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-mobile -g -y` | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 98,633 | 178 | 10,796 | 0 | 1 | 0 | body-budget 1 |
-| 3 | [design](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/design/SKILL.md) | `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/design -g -y` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 137,022 | 174 | 3,624 | 0 | 0 | 0 | 通过 |
-| 4 | [impeccable](https://github.com/pbakaus/impeccable/blob/main/.opencode/skills/impeccable/SKILL.md) | `npx skills add https://github.com/pbakaus/impeccable/tree/main/.opencode/skills/impeccable -g -y` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 82,519 | 161 | 2,971 | 0 | 0 | 0 | 通过 |
-| 5 | [image-to-code](https://github.com/Leonxlnx/taste-skill/blob/main/skills/image-to-code-skill/SKILL.md) | `npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/image-to-code-skill -g -y` | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 98,633 | 155 | 9,763 | 1 | 1 | 0 | spec-dir 1, body-budget 1 |
-| 6 | [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-ux-pro-max/SKILL.md) | `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-ux-pro-max -g -y` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 137,022 | 136 | 4,146 | 0 | 0 | 0 | 通过 |
-| 7 | [taste](https://github.com/affaan-m/ECC/blob/main/skills/taste/SKILL.md) | `npx skills add https://github.com/affaan-m/ECC/tree/main/skills/taste -g -y` | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 282,919 | 131 | 4,060 | 0 | 0 | 0 | 通过 |
-| 8 | [ui-styling](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-styling/SKILL.md) | `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-styling -g -y` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 137,022 | 130 | 2,671 | 0 | 0 | 0 | 通过 |
+| 1 | [imagegen-frontend-web](https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-web/SKILL.md) | `npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-web -g -y` | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 98,731 | 181 | 9,858 | 0 | 1 | 0 | body-budget 1 |
+| 2 | [imagegen-frontend-mobile](https://github.com/Leonxlnx/taste-skill/blob/main/skills/imagegen-frontend-mobile/SKILL.md) | `npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/imagegen-frontend-mobile -g -y` | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 98,731 | 178 | 10,796 | 0 | 1 | 0 | body-budget 1 |
+| 3 | [design](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/design/SKILL.md) | `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/design -g -y` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 137,117 | 174 | 3,624 | 0 | 0 | 0 | 通过 |
+| 4 | [impeccable](https://github.com/pbakaus/impeccable/blob/main/.opencode/skills/impeccable/SKILL.md) | `npx skills add https://github.com/pbakaus/impeccable/tree/main/.opencode/skills/impeccable -g -y` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 82,608 | 161 | 2,971 | 0 | 0 | 0 | 通过 |
+| 5 | [image-to-code](https://github.com/Leonxlnx/taste-skill/blob/main/skills/image-to-code-skill/SKILL.md) | `npx skills add https://github.com/Leonxlnx/taste-skill/tree/main/skills/image-to-code-skill -g -y` | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 98,731 | 155 | 9,763 | 1 | 1 | 0 | spec-dir 1, body-budget 1 |
+| 6 | [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-ux-pro-max/SKILL.md) | `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-ux-pro-max -g -y` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 137,117 | 136 | 4,146 | 0 | 0 | 0 | 通过 |
+| 7 | [taste](https://github.com/affaan-m/ECC/blob/main/skills/taste/SKILL.md) | `npx skills add https://github.com/affaan-m/ECC/tree/main/skills/taste -g -y` | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 283,060 | 131 | 4,060 | 0 | 0 | 0 | 通过 |
+| 8 | [ui-styling](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-styling/SKILL.md) | `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.claude/skills/ui-styling -g -y` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 137,117 | 130 | 2,671 | 0 | 0 | 0 | 通过 |
 
 ### 省 token
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [caveman](https://github.com/JuliusBrussee/caveman/blob/main/plugins/caveman/skills/caveman/SKILL.md) | `npx skills add https://github.com/JuliusBrussee/caveman/tree/main/plugins/caveman/skills/caveman -g -y` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | 113,367 | 60 | 1,191 | 0 | 0 | 0 | 通过 |
-| 2 | [ponytail](https://github.com/DietrichGebert/ponytail/blob/main/.openclaw/skills/ponytail/SKILL.md) | `npx skills add https://github.com/DietrichGebert/ponytail/tree/main/.openclaw/skills/ponytail -g -y` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | 166,559 | 39 | 808 | 0 | 0 | 0 | 通过 |
+| 1 | [caveman](https://github.com/JuliusBrussee/caveman/blob/main/plugins/caveman/skills/caveman/SKILL.md) | `npx skills add https://github.com/JuliusBrussee/caveman/tree/main/plugins/caveman/skills/caveman -g -y` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | 113,409 | 60 | 1,191 | 0 | 0 | 0 | 通过 |
+| 2 | [ponytail](https://github.com/DietrichGebert/ponytail/blob/main/.openclaw/skills/ponytail/SKILL.md) | `npx skills add https://github.com/DietrichGebert/ponytail/tree/main/.openclaw/skills/ponytail -g -y` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | 166,775 | 39 | 808 | 0 | 0 | 0 | 通过 |
 
 ### 记忆
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [mem-setup](https://github.com/thedotmack/claude-mem/blob/main/cowork/skills/mem-setup/SKILL.md) | `npx skills add https://github.com/thedotmack/claude-mem/tree/main/cowork/skills/mem-setup -g -y` | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 101,509 | 78 | 681 | 0 | 0 | 0 | 通过 |
-| 2 | [mem-search](https://github.com/thedotmack/claude-mem/blob/main/plugin/skills/mem-search/SKILL.md) | `npx skills add https://github.com/thedotmack/claude-mem/tree/main/plugin/skills/mem-search -g -y` | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 101,509 | 51 | 1,433 | 0 | 0 | 0 | 通过 |
+| 1 | [mem-setup](https://github.com/thedotmack/claude-mem/blob/main/cowork/skills/mem-setup/SKILL.md) | `npx skills add https://github.com/thedotmack/claude-mem/tree/main/cowork/skills/mem-setup -g -y` | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 101,558 | 78 | 681 | 0 | 0 | 0 | 通过 |
+| 2 | [mem-search](https://github.com/thedotmack/claude-mem/blob/main/plugin/skills/mem-search/SKILL.md) | `npx skills add https://github.com/thedotmack/claude-mem/tree/main/plugin/skills/mem-search -g -y` | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 101,558 | 51 | 1,433 | 0 | 0 | 0 | 通过 |
 
 ### 规划
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [brainstorming](https://github.com/obra/superpowers/blob/main/skills/brainstorming/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/brainstorming -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,395 | 61 | 2,636 | 0 | 0 | 0 | 通过 |
-| 2 | [executing-plans](https://github.com/obra/superpowers/blob/main/skills/executing-plans/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/executing-plans -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,395 | 50 | 5,372 | 0 | 1 | 0 | body-budget 1 |
-| 3 | [writing-plans](https://github.com/obra/superpowers/blob/main/skills/writing-plans/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/writing-plans -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,395 | 26 | 2,697 | 0 | 0 | 0 | 通过 |
+| 1 | [brainstorming](https://github.com/obra/superpowers/blob/main/skills/brainstorming/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/brainstorming -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,511 | 61 | 2,636 | 0 | 0 | 0 | 通过 |
+| 2 | [executing-plans](https://github.com/obra/superpowers/blob/main/skills/executing-plans/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/executing-plans -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,511 | 50 | 5,372 | 0 | 1 | 0 | body-budget 1 |
+| 3 | [writing-plans](https://github.com/obra/superpowers/blob/main/skills/writing-plans/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/writing-plans -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,511 | 26 | 2,697 | 0 | 0 | 0 | 通过 |
 
 ### 审查
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [code-review](https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/code-review -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,576 | 115 | 1,647 | 0 | 0 | 0 | 通过 |
-| 2 | [receiving-code-review](https://github.com/obra/superpowers/blob/main/skills/receiving-code-review/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/receiving-code-review -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,395 | 69 | 1,577 | 0 | 0 | 0 | 通过 |
-| 3 | [requesting-code-review](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/requesting-code-review -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,395 | 35 | 749 | 0 | 0 | 0 | 通过 |
+| 1 | [code-review](https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/code-review -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,864 | 115 | 1,647 | 0 | 0 | 0 | 通过 |
+| 2 | [receiving-code-review](https://github.com/obra/superpowers/blob/main/skills/receiving-code-review/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/receiving-code-review -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,511 | 69 | 1,577 | 0 | 0 | 0 | 通过 |
+| 3 | [requesting-code-review](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/requesting-code-review -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,511 | 35 | 749 | 0 | 0 | 0 | 通过 |
 
 ### 测试
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [webapp-testing](https://github.com/anthropics/skills/blob/main/skills/webapp-testing/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/webapp-testing -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,873 | 58 | 914 | 0 | 0 | 0 | 通过 |
-| 2 | [tdd](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,576 | 40 | 918 | 0 | 0 | 0 | 通过 |
-| 3 | [test-driven-development](https://github.com/obra/superpowers/blob/main/skills/test-driven-development/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/test-driven-development -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,395 | 26 | 2,553 | 0 | 0 | 0 | 通过 |
+| 1 | [webapp-testing](https://github.com/anthropics/skills/blob/main/skills/webapp-testing/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/webapp-testing -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,927 | 58 | 914 | 0 | 0 | 0 | 通过 |
+| 2 | [tdd](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,864 | 40 | 918 | 0 | 0 | 0 | 通过 |
+| 3 | [test-driven-development](https://github.com/obra/superpowers/blob/main/skills/test-driven-development/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/test-driven-development -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,511 | 26 | 2,553 | 0 | 0 | 0 | 通过 |
 
 ### 调试
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [diagnosing-bugs](https://github.com/mattpocock/skills/blob/main/skills/engineering/diagnosing-bugs/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/diagnosing-bugs -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,576 | 44 | 2,271 | 0 | 0 | 0 | 通过 |
-| 2 | [systematic-debugging](https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/systematic-debugging -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,395 | 29 | 2,484 | 0 | 0 | 0 | 通过 |
+| 1 | [diagnosing-bugs](https://github.com/mattpocock/skills/blob/main/skills/engineering/diagnosing-bugs/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/diagnosing-bugs -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,864 | 44 | 2,271 | 0 | 0 | 0 | 通过 |
+| 2 | [systematic-debugging](https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md) | `npx skills add https://github.com/obra/superpowers/tree/main/skills/systematic-debugging -g -y` | [obra/superpowers](https://github.com/obra/superpowers) | 301,511 | 29 | 2,484 | 0 | 0 | 0 | 通过 |
 
 ### 研究
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [deep-research](https://github.com/affaan-m/ECC/blob/main/skills/deep-research/SKILL.md) | `npx skills add https://github.com/affaan-m/ECC/tree/main/skills/deep-research -g -y` | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 282,919 | 110 | 1,493 | 0 | 0 | 0 | 通过 |
-| 2 | [research](https://github.com/mattpocock/skills/blob/main/skills/engineering/research/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/research -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,576 | 67 | 142 | 0 | 0 | 0 | 通过 |
+| 1 | [deep-research](https://github.com/affaan-m/ECC/blob/main/skills/deep-research/SKILL.md) | `npx skills add https://github.com/affaan-m/ECC/tree/main/skills/deep-research -g -y` | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 283,060 | 110 | 1,493 | 0 | 0 | 0 | 通过 |
+| 2 | [research](https://github.com/mattpocock/skills/blob/main/skills/engineering/research/SKILL.md) | `npx skills add https://github.com/mattpocock/skills/tree/main/skills/engineering/research -g -y` | [mattpocock/skills](https://github.com/mattpocock/skills) | 295,864 | 67 | 142 | 0 | 0 | 0 | 通过 |
 
 ### 文档
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [xlsx](https://github.com/anthropics/skills/blob/main/skills/xlsx/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/xlsx -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,873 | 254 | 2,033 | 0 | 0 | 0 | 通过 |
-| 2 | [docx](https://github.com/anthropics/skills/blob/main/skills/docx/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/docx -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,873 | 227 | 1,606 | 0 | 0 | 0 | 通过 |
-| 3 | [pptx](https://github.com/anthropics/skills/blob/main/skills/pptx/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/pptx -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,873 | 201 | 5,377 | 0 | 1 | 0 | body-budget 1 |
+| 1 | [xlsx](https://github.com/anthropics/skills/blob/main/skills/xlsx/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/xlsx -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,927 | 254 | 2,033 | 0 | 0 | 0 | 通过 |
+| 2 | [docx](https://github.com/anthropics/skills/blob/main/skills/docx/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/docx -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,927 | 227 | 1,606 | 0 | 0 | 0 | 通过 |
+| 3 | [pptx](https://github.com/anthropics/skills/blob/main/skills/pptx/SKILL.md) | `npx skills add https://github.com/anthropics/skills/tree/main/skills/pptx -g -y` | [anthropics/skills](https://github.com/anthropics/skills) | 181,927 | 201 | 5,377 | 0 | 1 | 0 | body-budget 1 |
 
 ### 安全
 
 | # | 技能 | 安装 | 仓库 | 星 | 启动 token | 正文 token | 错误 | 警告 | 较上次 | 检查 |
 | ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | [agent-security-hardening](https://github.com/affaan-m/ECC/blob/main/pi/core/skills/agent-security-hardening/SKILL.md) | `npx skills add https://github.com/affaan-m/ECC/tree/main/pi/core/skills/agent-security-hardening -g -y` | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 282,919 | 104 | 2,688 | 0 | 0 | 0 | 通过 |
+| 1 | [agent-security-hardening](https://github.com/affaan-m/ECC/blob/main/pi/core/skills/agent-security-hardening/SKILL.md) | `npx skills add https://github.com/affaan-m/ECC/tree/main/pi/core/skills/agent-security-hardening -g -y` | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 283,060 | 104 | 2,688 | 0 | 0 | 0 | 通过 |
 <!-- leaderboard:end -->
 
 ## 中文
