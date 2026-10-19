@@ -774,6 +774,40 @@
         "anthropics/skills/pptx": 201,
         "affaan-m/ECC/agent-security-hardening": 104
       }
+    },
+    {
+      "t": "2026-10-19T22:19:44+00:00",
+      "startup": {
+        "Leonxlnx/taste-skill/design-taste-frontend": 261,
+        "nextlevelbuilder/ui-ux-pro-max-skill/design": 174,
+        "pbakaus/impeccable/impeccable": 161,
+        "nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max": 136,
+        "affaan-m/ECC/taste": 131,
+        "nextlevelbuilder/ui-ux-pro-max-skill/ui-styling": 130,
+        "affaan-m/ECC/design-system": 118,
+        "anthropics/skills/frontend-design": 58,
+        "JuliusBrussee/caveman/caveman": 60,
+        "DietrichGebert/ponytail/ponytail": 39,
+        "thedotmack/claude-mem/mem-setup": 78,
+        "thedotmack/claude-mem/mem-search": 51,
+        "obra/superpowers/brainstorming": 61,
+        "obra/superpowers/executing-plans": 50,
+        "obra/superpowers/writing-plans": 26,
+        "mattpocock/skills/code-review": 115,
+        "obra/superpowers/receiving-code-review": 69,
+        "obra/superpowers/requesting-code-review": 35,
+        "anthropics/skills/webapp-testing": 58,
+        "mattpocock/skills/tdd": 40,
+        "obra/superpowers/test-driven-development": 26,
+        "mattpocock/skills/diagnosing-bugs": 44,
+        "obra/superpowers/systematic-debugging": 29,
+        "affaan-m/ECC/deep-research": 110,
+        "mattpocock/skills/research": 67,
+        "anthropics/skills/xlsx": 254,
+        "anthropics/skills/docx": 227,
+        "anthropics/skills/pptx": 201,
+        "affaan-m/ECC/agent-security-hardening": 104
+      }
     }
   ]
 }
